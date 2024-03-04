@@ -11,7 +11,7 @@ from jinja2 import TemplateNotFound
 @blueprint.route('/index')
 @login_required
 def index():
-    return render_template('pages/index.html', segment='index')
+    return render_template('pages/sample-page.html', segment='index')
 
 @blueprint.route('/typography')
 @login_required

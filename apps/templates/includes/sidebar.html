@@ -4,12 +4,17 @@
     <div class="m-header">
       <a href="index.html" class="b-brand">
         <!-- ========   Change your logo from here   ============ -->
-        <img src="{{ url_for('static', filename='assets/images/VVM-Master-Logo.png') }}" style="height: 20px;"  alt="" class="logo logo-lg" />
+        <img
+          src="{{ url_for('static', filename='assets/images/VVM-Master-Logo.png') }}"
+          style="height: 20px"
+          alt=""
+          class="logo logo-lg"
+        />
       </a>
     </div>
     <div class="navbar-content">
       <ul class="pc-navbar">
-        <li class="pc-item pc-caption">
+        <!-- <li class="pc-item pc-caption">
           <label>Dashboard</label>
           <i class="ti ti-dashboard"></i>
         </li>
@@ -64,9 +69,15 @@
                 class="ti ti-brand-chrome"></i></span><span class="pc-mtext">Sample page</span></a></li>
         <li class="pc-item">
           <a href="https://github.com/app-generator/flask-berry-dashboard" target="_blank" class="pc-link"><span
-              class="pc-micon"><i class="ti ti-vocabulary"></i></span><span class="pc-mtext">DOCS</span></a></li>
+              class="pc-micon"><i class="ti ti-vocabulary"></i></span><span class="pc-mtext">DOCS</span></a></li> -->
+
+        <li class="pc-item">
+          <a href="/" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-dashboard"></i></span>
+            <span class="pc-mtext">Dashboard</span></a
+          >
+        </li>
       </ul>
-    
     </div>
   </div>
 </nav>
