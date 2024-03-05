@@ -1,0 +1,119 @@
+{% extends 'layouts/base.html' %} {% block title %} Configurations {% endblock title
+%} {% block content %}
+<!-- [ Main Content ] start -->
+<div class="pc-container">
+  <div class="pc-content">
+    <!-- [ breadcrumb ] start -->
+    <div class="page-header">
+      <div class="page-block">
+        <div class="row align-items-center">
+          
+          <div class="col-md-12">
+            <div class="page-header-title">
+              <h5 class="m-b-10">Configurations</h5>
+            </div>
+            <ul class="breadcrumb">
+              <li class="breadcrumb-item" aria-current="page">Set the required parameters for testing tools</li>
+             
+            </ul>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- [ breadcrumb ] end -->
+
+    <!-- [ Main Content ] start -->
+    <div class="row">
+      {% for config in configs %}
+      <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="card">
+          <div class="card-header">
+           
+            {% if succ %}
+            {% if succ[0] == config.config_name %}
+            <h4><span class="text-success"> {{ succ[1] | safe }} </span></h4>
+            {% endif %} {% if err %}
+            <h4><span class="text-danger"> {{ err[1] | safe }} </span></h4>
+            {% endif %}
+            {% endif %}
+            <h5>{{config.config_name}}</h5>
+          </div>
+          <div class="card-body">
+      
+            <form role="form" method="post" action="/configs">
+              {{ form.hidden_tag() }}
+              
+              
+              <div class="form-floating mb-3" hidden>
+                {{ form.config_name(placeholder="Config Name", value=config.config_name, class="form-control")
+                }}
+              
+              </div>
+
+              {% if config.config_endpoint != None %}
+              <div class="form-floating mb-3">
+                {{ form.config_endpoint(placeholder="Endpoint", value = config.config_endpoint ,class="form-control")
+                }}
+                <label for="floatingInput">Endpoint</label>
+              </div>
+              {% endif %}
+
+              {% if config.config_api_key != None %}
+              <div class="form-floating mb-3">
+                {{ form.config_api_key(placeholder="API Key", value = config.config_api_key , class="form-control")
+                }}
+                <label for="floatingInput">API Key</label>
+              </div>
+              {% endif %}
+
+
+              {% if config.config_path != None %}
+              <div class="form-floating mb-3">
+                {{ form.config_path(placeholder="Nuclei Path", value=config.config_path , class="form-control")
+                }}
+                <label for="floatingInput">Nuclei Path</label>
+              </div>
+              {% endif %}
+
+
+              {% if config.config_username != None %}
+              <div class="form-floating mb-3">
+                {{ form.config_username(placeholder="Nessus Username", value=config.config_username ,class="form-control")
+                }}
+                <label for="floatingInput">Nessus Username</label>
+              </div>
+              {% endif %}
+
+
+              {% if config.config_password != None %}
+              <div class="form-floating mb-3">
+                {{ form.config_password(placeholder="Nessus Password", value =config.config_password ,class="form-control")
+                }}
+                <label for="floatingInput">Nessus Password</label>
+              </div>
+              {% endif %}
+             
+
+              <div class="d-grid mt-4">
+                <button
+                  type="submit"
+                  name="save_config"
+                  class="btn btn-secondary"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+            
+      {% endfor %}
+   
+    </div>
+    <!-- [ Main Content ] end -->
+  </div>
+</div>
+<!-- [ Main Content ] end -->
+{% endblock content %}

@@ -156,14 +156,14 @@
     <li class="dropdown pc-h-item header-user-profile">
       <a class="pc-head-link head-link-primary dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
         role="button" aria-haspopup="false" aria-expanded="false">
-        <img src="{{ url_for('static', filename='assets/images/user/avatar-2.jpg') }}" alt="user-image" class="user-avtar" />
+        <img src="{{ url_for('static', filename='assets/images/user/av.png') }}" alt="user-image" class="user-avtar" />
         <span>
           <i class="ti ti-settings"></i>
         </span>
       </a>
       <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
         <div class="dropdown-header">
-          <h4>Good Morning, <span class="small text-muted"> John Doe</span></h4>
+          <h2> <span class="small text-muted">  {{ current_user.username }}</span></h2>
           <p class="text-muted">Project Admin</p>
           <!-- <form class="header-search">
             <i class="ti ti-search icon-search"></i>

@@ -2017,9 +2017,9 @@ progress {
   font-weight: 400;
   line-height: 1.5;
   color: #212529;
-  background-color: #ffffff;
+  background-color: #f1f1f1;
   background-clip: padding-box;
-  border: 1px solid #ced4da;
+  border: none;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
@@ -14735,7 +14735,7 @@ pre[class*=language-] > code {
   color: #616161;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 600;
 }
 .pc-sidebar .pc-link:active, .pc-sidebar .pc-link:focus, .pc-sidebar .pc-link:hover {
   text-decoration: none;

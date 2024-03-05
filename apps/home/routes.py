@@ -5,12 +5,16 @@ Copyright (c) 2019 - present AppSeed.us
 
 from apps.home import blueprint
 from flask import render_template, request, url_for, redirect
-from flask_login import login_required
+from flask_login import login_required,current_user
 from jinja2 import TemplateNotFound
 from apps import db
 
 from apps.home.forms import TestForm
 from apps.home.models import Tests
+
+@blueprint.context_processor
+def inject_user():
+    return dict(current_user=current_user)
 
 @blueprint.route('/index')
 @login_required
@@ -26,7 +30,6 @@ def tests():
     test_form = TestForm(request.form)
     all_tests = Tests.query.all()
     
-    print(request.form)
     if 'create_test' in request.form:
         test_name = request.form['test_name']
         test_url = request.form['test_url']
