@@ -14,6 +14,7 @@ class Configs(db.Model, UserMixin):
     config_username = db.Column(db.String(225), unique=False,default=None)
     config_password = db.Column(db.String(225), unique=False,default=None)
     config_path = db.Column(db.String(225), unique=False,default=None)
+    status = db.Column(db.String(225), unique=False,default="In Progress")
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

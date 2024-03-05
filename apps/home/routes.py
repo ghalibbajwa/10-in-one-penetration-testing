@@ -11,6 +11,9 @@ from apps import db
 
 from apps.home.forms import TestForm
 from apps.home.models import Tests
+from apps.configs.models import Configs
+from apps.home.libs import burp,zap
+
 
 @blueprint.context_processor
 def inject_user():
@@ -47,6 +50,30 @@ def tests():
         db.session.add(new_test)
         db.session.commit()
 
+        burpconf = Configs.query.filter_by(config_name='Burp Suite').first()
+        status = burp.run_test(burpconf,new_test)
+        
+        if(status.get("error") is not None):
+            
+            db.session.delete(new_test)
+            db.session.commit()
+            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests)
+        else:
+            new_test.burp_id=status['success']
+            db.session.commit()
+        
+
+        zapconf = Configs.query.filter_by(config_name='Zap').first()
+        status = zap.run_test(zapconf,new_test)
+        if(status.get("error") is not None):
+            
+            db.session.delete(new_test)
+            db.session.commit()
+            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests)
+        else:
+            new_test.zap_id=status['success']
+            db.session.commit()
+
         all_tests = Tests.query.all()
 
         return render_template('pages/dashboard.html', segment='index',form=test_form, succ="New Test has been added", tests=all_tests)
@@ -59,6 +86,27 @@ def tests():
         db.session.commit()
         all_tests = Tests.query.all()
         return render_template('pages/dashboard.html', segment='index',form=test_form, succ="Test has been Deleted", tests=all_tests)
+    
+    if 'details' in request.form:
+        test_id = request.form['details']
+        test = Tests.query.get_or_404(test_id)
+        burpconf = Configs.query.filter_by(config_name='Burp Suite').first()
+        progress = burp.check_status(burpconf,test)
+        if(progress.get("error") is not None):
+            return render_template('pages/dashboard.html', segment='index',form=test_form, err=progress['error'], tests=all_tests)
+       
+
+        zapconf = Configs.query.filter_by(config_name='Zap').first()
+        zap_progress = zap.check_status(zapconf,test)
+        
+        if(zap_progress.get("error") is not None):
+            return render_template('pages/dashboard.html', segment='index',form=test_form, err=progress['error'], tests=all_tests)
+
+        all_tools = Configs.query.all()
+        
+        
+
+        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=progress,zap_progress=zap_progress)
 
 
 
@@ -69,25 +117,27 @@ def tests():
 
 
 
-@blueprint.route('/typography')
-@login_required
-def typography():
-    return render_template('pages/typography.html')
 
-@blueprint.route('/color')
-@login_required
-def color():
-    return render_template('pages/color.html')
 
-@blueprint.route('/icon-tabler')
-@login_required
-def icon_tabler():
-    return render_template('pages/icon-tabler.html')
+# @blueprint.route('/typography')
+# @login_required
+# def typography():
+#     return render_template('pages/typography.html')
 
-@blueprint.route('/sample-page')
-@login_required
-def sample_page():
-    return render_template('pages/sample-page.html')  
+# @blueprint.route('/color')
+# @login_required
+# def color():
+#     return render_template('pages/color.html')
+
+# @blueprint.route('/icon-tabler')
+# @login_required
+# def icon_tabler():
+#     return render_template('pages/icon-tabler.html')
+
+# @blueprint.route('/sample-page')
+# @login_required
+# def sample_page():
+#     return render_template('pages/sample-page.html')  
 
 @blueprint.route('/accounts/password-reset/')
 def password_reset():

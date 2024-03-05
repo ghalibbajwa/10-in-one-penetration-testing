@@ -14,6 +14,8 @@ class Tests(db.Model, UserMixin):
     site_username = db.Column(db.String(225), unique=False)
     status = db.Column(db.String(225), default="Running", unique=False)
     site_password = db.Column(db.String(225), unique=False)
+    burp_id = db.Column(db.Integer, nullable=True)
+    zap_id = db.Column(db.Integer, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
