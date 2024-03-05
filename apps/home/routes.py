@@ -4,14 +4,67 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from apps.home import blueprint
-from flask import render_template, request
+from flask import render_template, request, url_for, redirect
 from flask_login import login_required
 from jinja2 import TemplateNotFound
+from apps import db
+
+from apps.home.forms import TestForm
+from apps.home.models import Tests
 
 @blueprint.route('/index')
 @login_required
 def index():
-    return render_template('pages/sample-page.html', segment='index')
+    test_form = TestForm()
+    all_tests = Tests.query.all()
+    return render_template('pages/dashboard.html', segment='index',form=test_form,tests=all_tests)
+
+
+@blueprint.route('/test', methods=['GET', 'POST'])
+@login_required
+def tests():
+    test_form = TestForm(request.form)
+    all_tests = Tests.query.all()
+    
+    print(request.form)
+    if 'create_test' in request.form:
+        test_name = request.form['test_name']
+        test_url = request.form['test_url']
+        site_username = request.form['site_username']
+        site_password = request.form['site_password']
+
+
+        new_test = Tests(
+            test_name=test_name,
+            test_url=test_url,
+            site_username=site_username,
+            site_password=site_password  # You should hash the password before storing it
+        )
+
+        db.session.add(new_test)
+        db.session.commit()
+
+        all_tests = Tests.query.all()
+
+        return render_template('pages/dashboard.html', segment='index',form=test_form, succ="New Test has been added", tests=all_tests)
+
+    if 'delete' in request.form:
+    
+        test_id = request.form['delete']
+        test_to_delete = Tests.query.get_or_404(test_id)
+        db.session.delete(test_to_delete)
+        db.session.commit()
+        all_tests = Tests.query.all()
+        return render_template('pages/dashboard.html', segment='index',form=test_form, succ="Test has been Deleted", tests=all_tests)
+
+
+
+
+    return render_template('pages/dashboard.html', segment='index',form=test_form, tests=all_tests)
+
+
+
+
 
 @blueprint.route('/typography')
 @login_required

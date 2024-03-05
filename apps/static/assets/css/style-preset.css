@@ -6,6 +6,10 @@ Support: support@phoenixcoded.net
 File: style.css
 =========================================================================
 =================================================================================== */
+
+
+
+
 [data-pc-theme=dark] {
   --bs-heading-color: #d7dcec;
   --bs-body-color: #bdc8f0;
@@ -671,7 +675,7 @@ File: style.css
 }
 
 [data-pc-preset=preset-1] .pc-container {
-  background: #d1ebad8f;
+ /* background: #d1ebad8f; */
 }
 [data-pc-preset=preset-1] .pc-sidebar .pc-item.active > .pc-link, [data-pc-preset=preset-1] .pc-sidebar .pc-item:focus > .pc-link, [data-pc-preset=preset-1] .pc-sidebar .pc-item:hover > .pc-link {
   color: #0e6f17;
@@ -1004,7 +1008,7 @@ File: style.css
   --bs-btn-bg: #0e6f17;
   --bs-btn-border-color: #0e6f17;
   --bs-btn-hover-color: #ffffff;
-  --bs-btn-hover-bg: #58319c;
+  --bs-btn-hover-bg: #0c3f18;
   --bs-btn-hover-border-color: #522e92;
   --bs-btn-focus-shadow-rgb: 126, 88, 194;
   --bs-btn-active-color: #ffffff;

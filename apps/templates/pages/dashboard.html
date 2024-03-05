@@ -1,0 +1,139 @@
+{% extends 'layouts/base.html' %} {% block title %} Dashboard {% endblock title
+%} {% block content %}
+<!-- [ Main Content ] start -->
+<div class="pc-container">
+  <div class="pc-content">
+    <!-- [ breadcrumb ] start -->
+    <div class="page-header">
+      <div class="page-block">
+        <div class="row align-items-center">
+          
+          <div class="col-md-12">
+            <div class="page-header-title">
+              <h5 class="m-b-10">Dashboard</h5>
+            </div>
+            <ul class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item" aria-current="page">Dashboard</li>
+             
+            </ul>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- [ breadcrumb ] end -->
+
+    <!-- [ Main Content ] start -->
+    <div class="row">
+      <!-- [ sample-page ] start -->
+      <div class="col-sm-12 col-md-9 col-lg-6">
+        <div class="card">
+          <div class="card-header">
+            <h5>Create New Test</h5>
+          </div>
+          <div class="card-body">
+           
+
+            <form role="form" method="post" action="/test">
+              {{ form.hidden_tag() }}
+
+              <div class="form-floating mb-3">
+                {{ form.test_name(placeholder="Test Name", class="form-control")
+                }}
+                <label for="floatingInput">Test Name</label>
+              </div>
+              <div class="form-floating mb-3">
+                {{ form.test_url(placeholder="Test URL", class="form-control")
+                }}
+                <label for="floatingInput">Test URL</label>
+              </div>
+              <div class="form-floating mb-3">
+                {{ form.site_username(placeholder="Site Username",
+                class="form-control") }}
+                <label for="floatingInput">Site Username</label>
+              </div>
+              <div class="form-floating mb-3">
+                {{ form.site_password(placeholder="Site Password",
+                class="form-control", type="password") }}
+                <label for="floatingInput">Site Password</label>
+              </div>
+
+              <div class="d-grid mt-4">
+                <button
+                  type="submit"
+                  name="create_test"
+                  class="btn btn-secondary"
+                >
+                  Create Test
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-3 col-lg-6" >
+        <div class="card" style="max-height: 70vh; overflow-y: auto;">
+          <div class="card-body" >
+            {% if succ %}
+            <h4><span class="text-success"> {{ succ | safe }} </span></h4>
+            {% endif %} {% if err %}
+            <h4><span class="text-danger"> {{ err | safe }} </span></h4>
+            {% endif %}
+            <ul class="list-unstyled"   >
+              {% for test in tests %}
+              <li>
+                <li class="dropdown pc-h-item">
+                  <a class="list-group-item list-group-item-action">
+                    <div class="d-flex">
+                      
+                      <div class="flex-grow-1 ms-1">
+                        <span class="float-end text-muted">{{ (test.created_at).date() }} </span>
+                        
+                        <h3> {{ test.test_name }}</h3>
+                        
+                        <form role="form" method="post" action="/test">
+                        <span class="float-end text-muted"><button
+                          type="submit"
+                         name="details"
+                         class="btn btn-secondary"
+                              >
+                         Details</button>
+                        <button
+                          type="submit"
+                          id="test_id"
+                          value={{test.id}}
+                         name="delete"
+                         class="btn btn-danger "
+                              >
+                              
+                              Delete</i>
+                              </button></span>
+                        </form>
+                         
+                       
+                       
+                        <h4><div class="badge  bg-light-primary px-4" >{{test.test_url}}</div></h4>
+                        <h4><div class="badge rounded-pill bg-light-success px-4" >{{test.status}}</div> <div class="badge rounded-pill bg-light-warning px-4" >{{((test.updated_at - test.created_at).total_seconds() / 60) | int }} minutes</div></h4>
+
+                        
+                       
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <hr>
+              </li>
+              {% endfor %}
+            </ul>
+            
+          </div>
+        </div>
+      </div>
+      <!-- [ sample-page ] end -->
+    </div>
+    <!-- [ Main Content ] end -->
+  </div>
+</div>
+<!-- [ Main Content ] end -->
+{% endblock content %}
