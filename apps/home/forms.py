@@ -6,7 +6,7 @@ class TestForm(FlaskForm):
     test_name = StringField('Test Name',
                          id='test_name',
                          validators=[DataRequired()])
-    test_url = StringField('Test URL',
+    test_url = StringField('Site URL',
                          id='test_url',
                          validators=[DataRequired()])
     

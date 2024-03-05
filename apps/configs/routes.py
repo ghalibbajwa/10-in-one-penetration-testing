@@ -95,7 +95,7 @@ def index():
         
         db.session.commit()
         all_configs = Configs.query.all()
-        return render_template('pages/config.html',configs=all_configs,form=form,succ=[request.form['config_name'],request.form['config_name']+" Updated"])
+        return render_template('pages/config.html',configs=all_configs,form=form,succ=[request.form['config_name'],"Configuration Updated"])
 
       
     all_configs = Configs.query.all()
