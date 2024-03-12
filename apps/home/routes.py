@@ -12,7 +12,7 @@ from apps import db
 from apps.home.forms import TestForm
 from apps.home.models import Tests
 from apps.configs.models import Configs
-from apps.home.libs import burp,zap,nuclei
+from apps.home.libs import burp,zap,nuclei,nikto
 
 
 @blueprint.context_processor
@@ -28,13 +28,25 @@ def index():
 
 
 
+@blueprint.route('/nikto', methods=['POST'])
+def nikto_data():
+
+    if(request.method == "POST"):
+        content = request.json
+        test = Tests.query.get_or_404(content['test'])
+        
+        test.nikto_data = content
+        db.session.commit()
+
+    return "OK"
+
 @blueprint.route('/nuclei', methods=['POST'])
 def nuclei_data():
 
     if(request.method == "POST"):
         content = request.json
         test = Tests.query.get_or_404(content['test'])
-        print(test)
+        
         test.nuclei_data = content
         db.session.commit()
 
@@ -64,6 +76,20 @@ def tests():
         db.session.add(new_test)
         db.session.commit()
 
+
+        nikto_conf = Configs.query.filter_by(config_name='Nikto').first()
+        status = nikto.run_test(nikto_conf,new_test)
+        if(status.get("error") is not None):
+            
+            db.session.delete(new_test)
+            db.session.commit()
+            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests)
+        
+      
+
+
+
+
         nuclei_conf = Configs.query.filter_by(config_name='Nuclei').first()
         status = nuclei.run_test(nuclei_conf,new_test)
         if(status.get("error") is not None):
@@ -72,7 +98,7 @@ def tests():
             db.session.commit()
             return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests)
         
-
+        
 
 
 
@@ -116,6 +142,10 @@ def tests():
     if 'details' in request.form:
         test_id = request.form['details']
         test = Tests.query.get_or_404(test_id)
+
+
+
+
         burpconf = Configs.query.filter_by(config_name='Burp Suite').first()
         progress = burp.check_status(burpconf,test)
         
@@ -123,26 +153,40 @@ def tests():
         if(progress.get("error") is not None):
             return render_template('pages/dashboard.html', segment='index',form=test_form, err=progress['error'], tests=all_tests)
         test.burp_data=progress
+        db.session.commit()
         progress=test.burp_data
         zapconf = Configs.query.filter_by(config_name='Zap').first()
         zap_progress = zap.check_status(zapconf,test)
         
         if(zap_progress.get("error") is not None):
             return render_template('pages/dashboard.html', segment='index',form=test_form, err=progress['error'], tests=all_tests)
+       
         test.zap_data=zap_progress
         db.session.commit()
         zap_progress =  test.zap_data
-        all_tools = Configs.query.all()
+        
 
         nuclei_progess = test.nuclei_data
+        all_tools = Configs.query.all()
 
         if(nuclei_progess is None):
-             nuclei_progess = {'progress':0, 'status':"In Progress", 'test':test_id,'nuclei_data':None}
-             return render_template('pages/detail.html',  test=test,tools=all_tools,progress=progress,zap_progress=zap_progress,nuclei_progess =nuclei_progess)
+            nuclei_progess = {'progress':0, 'status':"In Progress", 'test':test_id,'nuclei_data':None}
+             
         
+       
+
+
+        nikto_progess = test.nikto_data
+
+        if(nikto_progess is None):
+             nikto_progess = {'progress':0, 'status':"In Progress", 'test':test_id,'nikto_data':None}
+            
+        
+        all_tools = Configs.query.all()
+ 
  
 
-        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=progress,zap_progress=zap_progress,nuclei_progess=nuclei_progess)
+        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=progress,zap_progress=zap_progress,nuclei_progess=nuclei_progess,nikto_progess=nikto_progess)
 
 
 

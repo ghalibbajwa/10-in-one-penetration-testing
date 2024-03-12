@@ -78,7 +78,7 @@ class ConfigForm(FlaskForm):
                          id='config_api_key',
                         )
     
-    config_path = StringField('Nuclei Path',
+    config_path = StringField('Binary Path',
                          id='config_path',
                          )
     

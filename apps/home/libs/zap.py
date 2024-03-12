@@ -34,6 +34,7 @@ def check_status(zaper,test):
 
     # try:
     progress = zap.ascan.status(test.zap_id)
+    print([progress])
     if(progress=="100"):
         results = zap.core.alerts(baseurl=test.test_url)
         return {"success":["100",results]}

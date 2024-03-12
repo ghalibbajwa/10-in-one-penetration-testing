@@ -56,6 +56,17 @@ def index():
 
         db.session.add(nuclei)
         db.session.commit()
+
+    
+    nikto = Configs.query.filter_by(config_name='Nikto').first()
+    if not nikto:
+        nikto = Configs(
+                    config_name='Nikto',
+                    config_path="C:/nikto-master/program/nikto.pl"
+                )
+
+        db.session.add(nikto)
+        db.session.commit()
     
     zap = Configs.query.filter_by(config_name='Zap').first()
     if not zap:

@@ -58,6 +58,19 @@
             <h4><div class="badge  bg-light-primary px-4" > {{nuclei_progess['status']}}</div></h4>
            
             {% endif %}
+
+            {% if tool.config_name == "Nikto"%}
+            <span class="float-end text-muted"><strong>
+             {{nikto_progess['progress']}}%
+              </strong></span>
+            <h4>{{ tool.config_name }}</h4>
+            <h4><div class="badge  bg-light-primary px-4" > {{nikto_progess['status']}}</div></h4>
+           
+            {% endif %}
+
+
+
+            
           </div>
         </div>
 
@@ -120,6 +133,7 @@
 
 
             {% if tool.config_name == "Nuclei"%}
+            {% if nuclei_progess['nuclei_data'] != None %}
             {% for issue in nuclei_progess['nuclei_data'] %}
             <h5>Vulnerability Name: {{issue['vulnerabilityName']}}</h5>
             <h5>Host: {{issue['host']}}</h5>
@@ -130,6 +144,27 @@
            
             <hr>
             {% endfor %}
+            {% endif %}
+            {% endif %}
+
+
+
+            {% if tool.config_name == "Nikto"%}
+            {% if nikto_progess['nikto_data'] != None %}
+            
+            <h5>Host: {{nikto_progess['nikto_data'][0]['host']}}</h5>  
+            <h5>IP: {{nikto_progess['nikto_data'][0]['ip']}}</h5>  
+            <h5>Port: {{nikto_progess['nikto_data'][0]['port']}}</h5>  
+            <hr>
+            {% for issue in nikto_progess['nikto_data'][0]['vulnerabilities'] %}
+            <h5>Method: {{issue['method']}}</h5>  
+            <h5>URL: {{issue['url']}}</h5>  
+            <h5>Message: {{issue['msg']}}</h5>  
+
+           
+            <hr>
+            {% endfor %}
+            {% endif %}
             {% endif %}
           </div>
         </div>
