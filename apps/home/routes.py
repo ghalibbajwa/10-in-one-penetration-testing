@@ -12,7 +12,7 @@ from apps import db
 from apps.home.forms import TestForm
 from apps.home.models import Tests
 from apps.configs.models import Configs
-from apps.home.libs import burp,zap
+from apps.home.libs import burp,zap,nuclei
 
 
 @blueprint.context_processor
@@ -26,6 +26,20 @@ def index():
     all_tests = Tests.query.all()
     return render_template('pages/dashboard.html', segment='index',form=test_form,tests=all_tests)
 
+
+
+@blueprint.route('/nuclei', methods=['POST'])
+def nuclei_data():
+
+    if(request.method == "POST"):
+        content = request.json
+        test = Tests.query.get_or_404(content['test'])
+        print(test)
+        test.nuclei_data = content
+        db.session.commit()
+
+    return "OK"
+    
 
 @blueprint.route('/test', methods=['GET', 'POST'])
 @login_required
@@ -49,6 +63,18 @@ def tests():
 
         db.session.add(new_test)
         db.session.commit()
+
+        nuclei_conf = Configs.query.filter_by(config_name='Nuclei').first()
+        status = nuclei.run_test(nuclei_conf,new_test)
+        if(status.get("error") is not None):
+            
+            db.session.delete(new_test)
+            db.session.commit()
+            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests)
+        
+
+
+
 
         burpconf = Configs.query.filter_by(config_name='Burp Suite').first()
         status = burp.run_test(burpconf,new_test)
@@ -92,21 +118,31 @@ def tests():
         test = Tests.query.get_or_404(test_id)
         burpconf = Configs.query.filter_by(config_name='Burp Suite').first()
         progress = burp.check_status(burpconf,test)
+        
+        
         if(progress.get("error") is not None):
             return render_template('pages/dashboard.html', segment='index',form=test_form, err=progress['error'], tests=all_tests)
-       
-
+        test.burp_data=progress
+        progress=test.burp_data
         zapconf = Configs.query.filter_by(config_name='Zap').first()
         zap_progress = zap.check_status(zapconf,test)
         
         if(zap_progress.get("error") is not None):
             return render_template('pages/dashboard.html', segment='index',form=test_form, err=progress['error'], tests=all_tests)
-
+        test.zap_data=zap_progress
+        db.session.commit()
+        zap_progress =  test.zap_data
         all_tools = Configs.query.all()
-        
-        
 
-        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=progress,zap_progress=zap_progress)
+        nuclei_progess = test.nuclei_data
+
+        if(nuclei_progess is None):
+             nuclei_progess = {'progress':0, 'status':"In Progress", 'test':test_id,'nuclei_data':None}
+             return render_template('pages/detail.html',  test=test,tools=all_tools,progress=progress,zap_progress=zap_progress,nuclei_progess =nuclei_progess)
+        
+ 
+
+        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=progress,zap_progress=zap_progress,nuclei_progess=nuclei_progess)
 
 
 

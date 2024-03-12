@@ -15,6 +15,7 @@ Flask-Minify==0.37
 flask-cdn
 burpsuite==0.0.3
 zaproxy==0.2.0
+pynuclei
 
 # flask_mysqldb
 # psycopg2-binary 

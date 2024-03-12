@@ -49,6 +49,15 @@
              <h4>{{ tool.config_name }}</h4>
              <h4><div class="badge  bg-light-primary px-4" >{% if zap_progress['success'][0] == "100" %} succeeded {% else %} In Progress {% endif %} </div></h4>
             {% endif %}
+
+            {% if tool.config_name == "Nuclei"%}
+            <span class="float-end text-muted"><strong>
+             {{nuclei_progess['progress']}}%
+              </strong></span>
+            <h4>{{ tool.config_name }}</h4>
+            <h4><div class="badge  bg-light-primary px-4" > {{nuclei_progess['status']}}</div></h4>
+           
+            {% endif %}
           </div>
         </div>
 
@@ -103,6 +112,21 @@
             <h5>Input Vector: {{issue['inputVector']}}</h5>
             <h5>URL: {{issue['url']}}</h5>
             <h5>Solution: {{issue['solution']}}</h5>
+           
+            <hr>
+            {% endfor %}
+            {% endif %}
+
+
+
+            {% if tool.config_name == "Nuclei"%}
+            {% for issue in nuclei_progess['nuclei_data'] %}
+            <h5>Vulnerability Name: {{issue['vulnerabilityName']}}</h5>
+            <h5>Host: {{issue['host']}}</h5>
+            <h5>Vulnerability Detail: {{issue['vulnerabilityDetail']}}</h5>
+            <h5>Description: {{issue['description']}}</h5>
+            <h5>Severity: {{issue['severity']}}</h5>
+
            
             <hr>
             {% endfor %}
