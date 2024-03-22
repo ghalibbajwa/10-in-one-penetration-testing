@@ -24,7 +24,8 @@ def inject_user():
 def index():
     test_form = TestForm()
     all_tests = Tests.query.all()
-    return render_template('pages/dashboard.html', segment='index',form=test_form,tests=all_tests)
+    all_tools = Configs.query.all()
+    return render_template('pages/dashboard.html', segment='index',form=test_form,tests=all_tests,tools=all_tools)
 
 
 
@@ -58,6 +59,7 @@ def nuclei_data():
 def tests():
     test_form = TestForm(request.form)
     all_tests = Tests.query.all()
+    all_tools = Configs.query.all()
     
     if 'create_test' in request.form:
         test_name = request.form['test_name']
@@ -83,7 +85,7 @@ def tests():
             
             db.session.delete(new_test)
             db.session.commit()
-            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests)
+            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests,tools=all_tools)
         
       
 
@@ -96,7 +98,7 @@ def tests():
             
             db.session.delete(new_test)
             db.session.commit()
-            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests)
+            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests,tools=all_tools)
         
         
 
@@ -109,7 +111,7 @@ def tests():
             
             db.session.delete(new_test)
             db.session.commit()
-            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests)
+            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests,tools=all_tools)
         else:
             new_test.burp_id=status['success']
             db.session.commit()
@@ -121,14 +123,14 @@ def tests():
             
             db.session.delete(new_test)
             db.session.commit()
-            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests)
+            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests,tools=all_tools)
         else:
             new_test.zap_id=status['success']
             db.session.commit()
 
         all_tests = Tests.query.all()
 
-        return render_template('pages/dashboard.html', segment='index',form=test_form, succ="New Test has been added", tests=all_tests)
+        return render_template('pages/dashboard.html', segment='index',form=test_form, succ="New Test has been added", tests=all_tests,tools=all_tools)
 
     if 'delete' in request.form:
     
@@ -137,7 +139,7 @@ def tests():
         db.session.delete(test_to_delete)
         db.session.commit()
         all_tests = Tests.query.all()
-        return render_template('pages/dashboard.html', segment='index',form=test_form, succ="Test has been Deleted", tests=all_tests)
+        return render_template('pages/dashboard.html', segment='index',form=test_form, succ="Test has been Deleted", tests=all_tests,tools=all_tools)
     
     if 'details' in request.form:
         test_id = request.form['details']
@@ -151,7 +153,7 @@ def tests():
         
         
         if(progress.get("error") is not None):
-            return render_template('pages/dashboard.html', segment='index',form=test_form, err=progress['error'], tests=all_tests)
+           progress=test.burp_data
         test.burp_data=progress
         db.session.commit()
         progress=test.burp_data
@@ -159,7 +161,8 @@ def tests():
         zap_progress = zap.check_status(zapconf,test)
         
         if(zap_progress.get("error") is not None):
-            return render_template('pages/dashboard.html', segment='index',form=test_form, err=progress['error'], tests=all_tests)
+            zap_progress =  test.zap_data
+            
        
         test.zap_data=zap_progress
         db.session.commit()
