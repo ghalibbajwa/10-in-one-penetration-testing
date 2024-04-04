@@ -4,15 +4,32 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from apps.home import blueprint
-from flask import render_template, request, url_for, redirect
+from flask import current_app, render_template, request, url_for, redirect
 from flask_login import login_required,current_user
 from jinja2 import TemplateNotFound
 from apps import db
+from sqlalchemy.orm import class_mapper
 
 from apps.home.forms import TestForm
 from apps.home.models import Tests
 from apps.configs.models import Configs
-from apps.home.libs import burp,zap,nuclei,nikto
+from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl
+from threading import Thread
+
+def sql_dict(obj):
+    """Converts a SQLAlchemy object to a dictionary."""
+    if not obj:
+        return None
+    
+    # Get the mapped columns and their values
+    mapped_cols = class_mapper(obj.__class__).mapped_table.c
+    columns = [col.name for col in mapped_cols]
+    values = [getattr(obj, column) for column in columns]
+
+    # Create a dictionary from columns and values
+    return dict(zip(columns, values))
+
+
 
 
 @blueprint.context_processor
@@ -30,9 +47,18 @@ def index():
 
 
 @blueprint.route('/nikto', methods=['POST'])
-def nikto_data():
+def nikto_data(test=None):
+    if(test != None):
+            #fetch config from db
+            nikto_conf = Configs.query.filter_by(config_name='Nikto').first()
+            nikto_dict=sql_dict(nikto_conf)
+            test_dict=sql_dict(test)
+          
+            #create and start nikto scanning thread
+            thread = Thread(target=nikto.run_test,args=[nikto_dict,test_dict])
+            thread.start()
 
-    if(request.method == "POST"):
+    if(request.method == "POST" and test==None):
         content = request.json
         test = Tests.query.get_or_404(content['test'])
         
@@ -42,9 +68,19 @@ def nikto_data():
     return "OK"
 
 @blueprint.route('/nuclei', methods=['POST'])
-def nuclei_data():
+def nuclei_data(test=None):
+    if(test != None):
+            #fetch config from db
+            nuclei_conf = Configs.query.filter_by(config_name='Nuclei').first()
+            nuclei_dict=sql_dict(nuclei_conf)
+            test_dict=sql_dict(test)
+          
+            #create and start nuclei scanning thread
+            thread = Thread(target=nuclei.run_test,args=[nuclei_dict,test_dict])
+            thread.start()
 
-    if(request.method == "POST"):
+    
+    if(request.method == "POST" and test==None):
         content = request.json
         test = Tests.query.get_or_404(content['test'])
         
@@ -52,16 +88,146 @@ def nuclei_data():
         db.session.commit()
 
     return "OK"
+
+
+
+@blueprint.route('/zap', methods=['POST'])
+def zap_data(test=None):
+        if(test != None):
+            #fetch config from db
+            zapconf = Configs.query.filter_by(config_name='Zap').first()
+            zap_dict=sql_dict(zapconf)
+            test_dict=sql_dict(test)
+          
+            #create and start zap scanning thread
+            thread = Thread(target=zap.run_test,args=[zap_dict,test_dict])
+            thread.start()
+
+        if(request.method == "POST" and test==None):
+  
+            content = request.json
+            test = Tests.query.get_or_404(content['test'])
+            test.zap_id=content['success']
+            db.session.commit()        
+
+        return "OK"
+
+
+
+@blueprint.route('/burp', methods=['POST'])
+def burp_data(test=None):
+
+        if(test != None):
+            #fetch config from db
+            burpconf = Configs.query.filter_by(config_name='Burp Suite').first()
+            burp_dict=sql_dict(burpconf)
+            test_dict=sql_dict(test)
     
+            #create and start burp scanning thread
+            thread = Thread(target=burp.run_test,args=[burp_dict,test_dict])
+            thread.start()
+
+        if(request.method == "POST" and test==None):
+  
+            content = request.json
+            test = Tests.query.get_or_404(content['test'])
+            test.burp_id=content['success']
+            db.session.commit()        
+
+        return "OK"
+
+
+@blueprint.route('/secretfinder', methods=['POST'])
+def secretfinder_data(test=None):
+
+        if(test != None):
+            test_dict=sql_dict(test)
+            #create and start secretfinder scanning thread
+            thread = Thread(target=waybackcurl.start_secret_finder,args=[test_dict])
+            thread.start()
+
+        if(request.method == "POST" and test==None):
+  
+            content = request.json
+            test = Tests.query.get_or_404(content['test'])
+            test.secret_finder_data=content['secret_finder_data']
+            db.session.commit()    
+        return "OK"
+
+def check_progress(test):
+    test_dict=sql_dict(test)
+
+
+    #check burp_progress
+    burpconf = Configs.query.filter_by(config_name='Burp Suite').first()
+    burp_dict=sql_dict(burpconf)
+    burp_progress = burp.check_status(burp_dict,test_dict)
+    
+    if(burp_progress.get("error") is not None):
+        burp_progress=test.burp_data
+    else:
+        test.burp_data=burp_progress
+        db.session.commit()
+
+
+    #check zap progress
+    zapconf = Configs.query.filter_by(config_name='Zap').first()
+    zap_dict=sql_dict(zapconf)
+    zap_progress = zap.check_status(zap_dict,test_dict)
+    
+   
+    if(zap_progress.get("error") is not None or 'does_not_exist' in zap_progress['success']):
+      
+        zap_progress =  test.zap_data
+       
+    else:
+
+        test.zap_data=zap_progress
+        db.session.commit()
+
+    
+    #check nuclei progress
+    nuclei_progress = test.nuclei_data
+
+    if(nuclei_progress is None):
+        nuclei_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'nuclei_data':None}
+
+    
+    #check nikto progress
+    nikto_progress = test.nikto_data
+
+    if(nikto_progress is None):
+            nikto_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'nikto_data':None}
+
+
+
+    #check secretfinder progress
+    secretfinder_progress = test.secret_finder_data
+
+    if(secretfinder_progress is None):
+            secretfinder_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'secretfinder_data':None}
+    else:
+            secretfinder_progress = {'progress':secretfinder_progress[1], 'status':secretfinder_progress[0], 'test':test.id,'secretfinder_data':secretfinder_progress[2]}
+    
+    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress
+
+        
+
+    
+
 
 @blueprint.route('/test', methods=['GET', 'POST'])
 @login_required
 def tests():
+
+    #get page data
     test_form = TestForm(request.form)
     all_tests = Tests.query.all()
     all_tools = Configs.query.all()
-    
+
     if 'create_test' in request.form:
+
+        #create a new db entry for test
         test_name = request.form['test_name']
         test_url = request.form['test_url']
         site_username = request.form['site_username']
@@ -72,66 +238,42 @@ def tests():
             test_name=test_name,
             test_url=test_url,
             site_username=site_username,
-            site_password=site_password  # You should hash the password before storing it
+            site_password=site_password  
         )
 
         db.session.add(new_test)
         db.session.commit()
 
-
-        nikto_conf = Configs.query.filter_by(config_name='Nikto').first()
-        status = nikto.run_test(nikto_conf,new_test)
-        if(status.get("error") is not None):
+        if('Burp' in request.form):
+            #start burpsuite test   
+            burp_data(new_test)
             
-            db.session.delete(new_test)
-            db.session.commit()
-            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests,tools=all_tools)
-        
-      
+        if('Nessus' in request.form):
+            print('Nessus')
 
+        if('Nuclei' in request.form):
+            #start nuclei test
+            nuclei_data(new_test)
 
-
-
-        nuclei_conf = Configs.query.filter_by(config_name='Nuclei').first()
-        status = nuclei.run_test(nuclei_conf,new_test)
-        if(status.get("error") is not None):
+        if('Zap' in request.form):
+            #start zap test
+            zap_data(new_test)
             
-            db.session.delete(new_test)
-            db.session.commit()
-            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests,tools=all_tools)
-        
-        
+        if('Nikto' in request.form):
+            #start nikto test
+            nikto_data(new_test)
+
+        if('secretfinder' in request.form):
+            #start nikto test
+            secretfinder_data(new_test)
 
 
-
-        burpconf = Configs.query.filter_by(config_name='Burp Suite').first()
-        status = burp.run_test(burpconf,new_test)
-        
-        if(status.get("error") is not None):
-            
-            db.session.delete(new_test)
-            db.session.commit()
-            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests,tools=all_tools)
-        else:
-            new_test.burp_id=status['success']
-            db.session.commit()
-        
-
-        zapconf = Configs.query.filter_by(config_name='Zap').first()
-        status = zap.run_test(zapconf,new_test)
-        if(status.get("error") is not None):
-            
-            db.session.delete(new_test)
-            db.session.commit()
-            return render_template('pages/dashboard.html', segment='index',form=test_form, err=status['error'], tests=all_tests,tools=all_tools)
-        else:
-            new_test.zap_id=status['success']
-            db.session.commit()
-
+        all_tools = Configs.query.all()
         all_tests = Tests.query.all()
 
-        return render_template('pages/dashboard.html', segment='index',form=test_form, succ="New Test has been added", tests=all_tests,tools=all_tools)
 
+
+        
     if 'delete' in request.form:
     
         test_id = request.form['delete']
@@ -141,60 +283,29 @@ def tests():
         all_tests = Tests.query.all()
         return render_template('pages/dashboard.html', segment='index',form=test_form, succ="Test has been Deleted", tests=all_tests,tools=all_tools)
     
+
+
     if 'details' in request.form:
         test_id = request.form['details']
         test = Tests.query.get_or_404(test_id)
 
 
+        burp_progress=""
+        zap_progress=""
+        nikto_progress=""
+        nuclei_progress=""
+        nessus_progress=""
+        secretfinder_progress=""
 
+        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress = check_progress(test)
 
-        burpconf = Configs.query.filter_by(config_name='Burp Suite').first()
-        progress = burp.check_status(burpconf,test)
-        
-        
-        if(progress.get("error") is not None):
-           progress=test.burp_data
-        test.burp_data=progress
-        db.session.commit()
-        progress=test.burp_data
-        zapconf = Configs.query.filter_by(config_name='Zap').first()
-        zap_progress = zap.check_status(zapconf,test)
-        
-        if(zap_progress.get("error") is not None):
-            zap_progress =  test.zap_data
-            
-       
-        test.zap_data=zap_progress
-        db.session.commit()
-        zap_progress =  test.zap_data
-        
-
-        nuclei_progess = test.nuclei_data
         all_tools = Configs.query.all()
 
-        if(nuclei_progess is None):
-            nuclei_progess = {'progress':0, 'status':"In Progress", 'test':test_id,'nuclei_data':None}
-             
-        
-       
-
-
-        nikto_progess = test.nikto_data
-
-        if(nikto_progess is None):
-             nikto_progess = {'progress':0, 'status':"In Progress", 'test':test_id,'nikto_data':None}
-            
-        
-        all_tools = Configs.query.all()
- 
- 
-
-        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=progress,zap_progress=zap_progress,nuclei_progess=nuclei_progess,nikto_progess=nikto_progess)
+        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress)
 
 
 
-
-    return render_template('pages/dashboard.html', segment='index',form=test_form, tests=all_tests)
+    return render_template('pages/dashboard.html', segment='index',form=test_form, tests=all_tests, tools=all_tools)
 
 
 

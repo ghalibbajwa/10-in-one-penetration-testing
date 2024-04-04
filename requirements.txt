@@ -16,6 +16,10 @@ flask-cdn
 burpsuite==0.0.3
 zaproxy==0.2.0
 pynuclei
+jsbeautifier
+requests_file
+lxml
+
 
 # flask_mysqldb
 # psycopg2-binary 

@@ -11,17 +11,16 @@ def remove_protocol(url):
     return(url[1][2:])
 
 def run_test(nuceli, test):
-    print(test.test_url)
-    url = remove_protocol(test.test_url)
+
+    url = remove_protocol(test['test_url'])
   
 
     
     try:
-        nucleiPath = nuceli.config_path
+        nucleiPath = nuceli['config_path']
         
-        t=threading.Thread(target=scan,args=[test.id,url,nucleiPath])
-        t.start()
-        
+
+        scan(test['id'],url,nucleiPath)
        
         return {"success":'OK'}
 

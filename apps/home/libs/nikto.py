@@ -6,12 +6,13 @@ import requests
 
 def run_test(nikto, test):
             try:
-                path = nikto.config_path
+                path = nikto['config_path']
 
                 current_path = os.getcwd()
-                cmd='echo "N" | perl '+ path +' -host '+test.test_url+' -o '+current_path+'/apps/results/'+ str(test.id) +'.json'
-                t=threading.Thread(target=run_nikto,args=[cmd,str(test.id) +'.json',test.id])
-                t.start()
+                cmd='echo "N" | perl '+ path +' -host '+test['test_url']+' -o '+current_path+'/apps/results/'+ str(test['id']) +'.json'
+                
+                run_nikto(cmd,str(test['id']) +'.json',test['id'])
+           
                 return {"success":'OK'}
 
             except Exception as e:

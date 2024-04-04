@@ -16,10 +16,14 @@
               <li class="breadcrumb-item" aria-current="page">
                 Details and Progress for {{test.test_name}}
               </li>
-             
-             
             </ul>
-            <button class="btn float-end my-0 py-0" onclick="refreshPage()" style="border: none;"><i class="ti ti-refresh my-0 py-0"></i></button>
+            <button
+              class="btn float-end my-0 py-0"
+              onclick="refreshPage()"
+              style="border: none"
+            >
+              <i class="ti ti-refresh my-0 py-0"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -34,43 +38,56 @@
         <div class="card">
           <div class="card-body">
             {% if tool.config_name == "Burp Suite"%}
-            <span class="float-end text-muted"><strong>
-             {{progress['success']['scan_metrics']['crawl_and_audit_progress']}}%
-              </strong></span>
+            {% if progress != None %}
+            <span class="float-end text-muted"
+              ><strong>
+                
+                {{progress['success']['scan_metrics']['crawl_and_audit_progress']}}%
+              </strong></span
+            >
             <h4>{{ tool.config_name }}</h4>
-            <h4><div class="badge  bg-light-primary px-4" >  {{progress['success']['scan_status']}}</div></h4>
-           
+            <h4>
+              <div class="badge bg-light-primary px-4">
+                {{progress['success']['scan_status']}}
+              </div>
+            </h4>
             {% endif %}
-
-            {% if tool.config_name == "Zap"%}
-            <span class="float-end text-muted"><strong>
-              {{zap_progress['success'][0]}}%
-               </strong></span>
-             <h4>{{ tool.config_name }}</h4>
-             <h4><div class="badge  bg-light-primary px-4" >{% if zap_progress['success'][0] == "100" %} succeeded {% else %} In Progress {% endif %} </div></h4>
-            {% endif %}
-
-            {% if tool.config_name == "Nuclei"%}
-            <span class="float-end text-muted"><strong>
-             {{nuclei_progess['progress']}}%
-              </strong></span>
+            {% endif %} {% if tool.config_name == "Zap"%}
+            {% if zap_progress != None %}
+            <span class="float-end text-muted"
+              ><strong> {{zap_progress['success'][0]}}% </strong></span
+            >
             <h4>{{ tool.config_name }}</h4>
-            <h4><div class="badge  bg-light-primary px-4" > {{nuclei_progess['status']}}</div></h4>
-           
+            <h4>
+              <div class="badge bg-light-primary px-4">
+                {% if zap_progress['success'][0] == "100" %} succeeded {% else
+                %} In Progress {% endif %}
+              </div>
+            </h4>
             {% endif %}
-
-            {% if tool.config_name == "Nikto"%}
-            <span class="float-end text-muted"><strong>
-             {{nikto_progess['progress']}}%
-              </strong></span>
+            {% endif %} {% if tool.config_name == "Nuclei"%}
+            <span class="float-end text-muted"
+              ><strong> {{nuclei_progress['progress']}}% </strong></span
+            >
             <h4>{{ tool.config_name }}</h4>
-            <h4><div class="badge  bg-light-primary px-4" > {{nikto_progess['status']}}</div></h4>
-           
+            <h4>
+              <div class="badge bg-light-primary px-4">
+                {{nuclei_progress['status']}}
+              </div>
+            </h4>
+
+            {% endif %} {% if tool.config_name == "Nikto"%}
+            <span class="float-end text-muted"
+              ><strong> {{nikto_progress['progress']}}% </strong></span
+            >
+            <h4>{{ tool.config_name }}</h4>
+            <h4>
+              <div class="badge bg-light-primary px-4">
+                {{nikto_progress['status']}}
+              </div>
+            </h4>
+
             {% endif %}
-
-
-
-            
           </div>
         </div>
 
@@ -78,100 +95,169 @@
       </div>
       {% endfor %}
 
+      <div class="col-sm-2 col-md-3 col-lg-2">
+        <div class="card">
+          <div class="card-body">
+            <span class="float-end text-muted"
+              ><strong> {{secretfinder_progress['progress'] | int}}% </strong></span
+            >
+            <h4>Secret Finder</h4>
+            <h4>
+              <div class="badge bg-light-primary px-4">
+                {{secretfinder_progress['status']}}
+              </div>
+            </h4>
+          </div>
+        </div>
+
+        <!-- [ Main Content ] end -->
+      </div>
+
       {% for tool in tools %}
       <div class="col-sm-12 col-md-12 col-lg-12">
-        <div class="card" >
+        <div class="card">
           <div class="card-header">
             <h4>{{tool.config_name}}</h4>
           </div>
-          <div class="card-body " style="max-height: 60vh; overflow-y: auto;">
+          <div class="card-body" style="max-height: 60vh; overflow-y: auto">
             {% if tool.config_name == "Burp Suite"%}
-
-            <h5>Crawl Requests Made: {{progress['success']['scan_metrics']['crawl_requests_made']}}</h5>
-            <h5>Crawl Network Errors: {{progress['success']['scan_metrics']['crawl_network_errors']}}</h5>
-            <h5>Unique Locations Visited: {{progress['success']['scan_metrics']['crawl_unique_locations_visited']}}</h5>
-            <h5>Crawl Requests Queued: {{progress['success']['scan_metrics']['crawl_requests_queued']}}</h5>
-            <h5>Audit Queue Items Completed: {{progress['success']['scan_metrics']['audit_queue_items_completed']}}</h5>
-            <h5>Audit Queue Items Waiting: {{progress['success']['scan_metrics']['audit_queue_items_waiting']}}</h5>
-            <h5>Audit Requests Made: {{progress['success']['scan_metrics']['audit_requests_made']}}</h5>
-            <h5>Audit Network Errors: {{progress['success']['scan_metrics']['audit_network_errors']}}</h5>
-            <h5>Issue Events: {{progress['success']['scan_metrics']['issue_events']}}</h5>
-            <h5>Crawl and Audit Status: {{progress['success']['scan_metrics']['crawl_and_audit_caption']}}</h5>
-            <h5>Total Elapsed Time: {{progress['success']['scan_metrics']['total_elapsed_time']}}</h5>
-            <h5>Audit Network Errors: {{progress['success']['scan_metrics']['audit_network_errors']}}</h5>
-            <h5>Audit Network Errors: {{progress['success']['scan_metrics']['audit_network_errors']}}</h5>
-            <hr>
+            {% if progress != None %}
+            <h5>
+              Crawl Requests Made:
+              {{progress['success']['scan_metrics']['crawl_requests_made']}}
+            </h5>
+            <h5>
+              Crawl Network Errors:
+              {{progress['success']['scan_metrics']['crawl_network_errors']}}
+            </h5>
+            <h5>
+              Unique Locations Visited:
+              {{progress['success']['scan_metrics']['crawl_unique_locations_visited']}}
+            </h5>
+            <h5>
+              Crawl Requests Queued:
+              {{progress['success']['scan_metrics']['crawl_requests_queued']}}
+            </h5>
+            <h5>
+              Audit Queue Items Completed:
+              {{progress['success']['scan_metrics']['audit_queue_items_completed']}}
+            </h5>
+            <h5>
+              Audit Queue Items Waiting:
+              {{progress['success']['scan_metrics']['audit_queue_items_waiting']}}
+            </h5>
+            <h5>
+              Audit Requests Made:
+              {{progress['success']['scan_metrics']['audit_requests_made']}}
+            </h5>
+            <h5>
+              Audit Network Errors:
+              {{progress['success']['scan_metrics']['audit_network_errors']}}
+            </h5>
+            <h5>
+              Issue Events:
+              {{progress['success']['scan_metrics']['issue_events']}}
+            </h5>
+            <h5>
+              Crawl and Audit Status:
+              {{progress['success']['scan_metrics']['crawl_and_audit_caption']}}
+            </h5>
+            <h5>
+              Total Elapsed Time:
+              {{progress['success']['scan_metrics']['total_elapsed_time']}}
+            </h5>
+            <h5>
+              Audit Network Errors:
+              {{progress['success']['scan_metrics']['audit_network_errors']}}
+            </h5>
+            <h5>
+              Audit Network Errors:
+              {{progress['success']['scan_metrics']['audit_network_errors']}}
+            </h5>
+            <hr />
             {% for issue in progress['success']['issue_events'] %}
             <h5>Name: {{issue['issue']['name']}}</h5>
             <h5>Origin: {{issue['issue']['origin']}}</h5>
             <h5>Path: {{issue['issue']['path']}}</h5>
             <h5>Severity: {{issue['issue']['severity']}}</h5>
             <h5>Confidence: {{issue['issue']['confidence']}}</h5>
-            <h5>Description: </h5>{{issue['issue']['description'] | safe}}
+            <h5>Description:</h5>
+            {{issue['issue']['description'] | safe}}
             <h5>Origin: {{issue['issue']['origin']}}</h5>
             <h5>Origin: {{issue['issue']['origin']}}</h5>
             <h5>Origin: {{issue['issue']['origin']}}</h5>
-            <hr>
-            {% endfor %}
-           
-            {% endif %}
-
-
-            {% if tool.config_name == "Zap"%}
-            {% for issue in zap_progress['success'][1] %}
+            <hr />
+            {% endfor %}{% endif %} {% endif %} {% if tool.config_name == "Zap"%}
+            {% if zap_progress != None %}
+            {% for
+            issue in zap_progress['success'][1] %}
             <h5>Method: {{issue['method']}}</h5>
             <h5>Confidence: {{issue['confidence']}}</h5>
-            <h5>Description: </h5>{{issue['description']}}
+            <h5>Description:</h5>
+            {{issue['description']}}
             <h5>Input Vector: {{issue['inputVector']}}</h5>
             <h5>URL: {{issue['url']}}</h5>
             <h5>Solution: {{issue['solution']}}</h5>
-           
-            <hr>
-            {% endfor %}
-            {% endif %}
 
-
-
-            {% if tool.config_name == "Nuclei"%}
-            {% if nuclei_progess['nuclei_data'] != None %}
-            {% for issue in nuclei_progess['nuclei_data'] %}
+            <hr />
+            {% endfor %}{% endif %}  {% endif %} {% if tool.config_name == "Nuclei"%} {% if
+            nuclei_progress['nuclei_data'] != None %} {% for issue in
+            nuclei_progress['nuclei_data'] %}
             <h5>Vulnerability Name: {{issue['vulnerabilityName']}}</h5>
             <h5>Host: {{issue['host']}}</h5>
             <h5>Vulnerability Detail: {{issue['vulnerabilityDetail']}}</h5>
             <h5>Description: {{issue['description']}}</h5>
             <h5>Severity: {{issue['severity']}}</h5>
 
-           
-            <hr>
-            {% endfor %}
-            {% endif %}
-            {% endif %}
+            <hr />
+            {% endfor %} {% endif %} {% endif %} {% if tool.config_name ==
+            "Nikto"%} {% if nikto_progress['nikto_data'] != None %}
 
+            <h5>Host: {{nikto_progress['nikto_data'][0]['host']}}</h5>
+            <h5>IP: {{nikto_progress['nikto_data'][0]['ip']}}</h5>
+            <h5>Port: {{nikto_progress['nikto_data'][0]['port']}}</h5>
+            <hr />
+            {% for issue in nikto_progress['nikto_data'][0]['vulnerabilities']
+            %}
+            <h5>Method: {{issue['method']}}</h5>
+            <h5>URL: {{issue['url']}}</h5>
+            <h5>Message: {{issue['msg']}}</h5>
 
-
-            {% if tool.config_name == "Nikto"%}
-            {% if nikto_progess['nikto_data'] != None %}
-            
-            <h5>Host: {{nikto_progess['nikto_data'][0]['host']}}</h5>  
-            <h5>IP: {{nikto_progess['nikto_data'][0]['ip']}}</h5>  
-            <h5>Port: {{nikto_progess['nikto_data'][0]['port']}}</h5>  
-            <hr>
-            {% for issue in nikto_progess['nikto_data'][0]['vulnerabilities'] %}
-            <h5>Method: {{issue['method']}}</h5>  
-            <h5>URL: {{issue['url']}}</h5>  
-            <h5>Message: {{issue['msg']}}</h5>  
-
-           
-            <hr>
-            {% endfor %}
-            {% endif %}
-            {% endif %}
+            <hr />
+            {% endfor %} {% endif %} {% endif %}
           </div>
         </div>
 
         <!-- [ Main Content ] end -->
       </div>
       {% endfor %}
+
+      <div class="col-sm-12 col-md-12 col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <h4>Secret Finder</h4>
+          </div>
+          <div class="card-body" style="max-height: 60vh; overflow-y: auto">
+            
+            {% for issue in  secretfinder_progress['secretfinder_data']%}
+            {% for item in  issue[1] %}
+            <h5>URL:  {{issue[0]}}</h5>
+            <h5>Matched:  {{item['matched']}}</h5>
+            <h5>Context:  {{item['context']}}</h5>
+            <h5>Name:  {{item['name']}}</h5>
+            <h5>Multi Context:  {{item['multi_context']}}</h5>
+            <hr>
+            {% endfor %}
+            <hr>
+            {% endfor %}
+            
+           
+          
+          </div>
+        </div>
+
+        <!-- [ Main Content ] end -->
+      </div>
     </div>
     <!-- [ Main Content ] end -->
     {% endblock content %}
@@ -181,11 +267,9 @@
 {% block extra_js %}
 <script>
   function refreshPage() {
-      // Display a confirmation dialog
-     
-      
-          location.reload();
-     
+    // Display a confirmation dialog
+
+    location.reload();
   }
 </script>
 {% endblock extra_js %}

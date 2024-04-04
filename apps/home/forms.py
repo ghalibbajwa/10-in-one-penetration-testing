@@ -17,3 +17,4 @@ class TestForm(FlaskForm):
     site_password = PasswordField('Site Password',
                              id='site_password',
                             )
+    

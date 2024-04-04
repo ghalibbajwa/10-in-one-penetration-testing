@@ -57,6 +57,22 @@
                 class="form-control", type="password") }}
                 <label for="floatingInput">Site Password</label>
               </div>
+              
+              <hr>
+              <div class="row">
+                {% for tool in tools %}
+                <div class="col">
+                  
+                  <input type="checkbox" id={{tool.config_name}} name={{tool.config_name}} value={{tool.config_name}}>
+                  <label for="floatingInput">{{tool.config_name}}</label>
+                </div>
+                {% endfor %}
+                <div class="col">
+                  
+                  <input type="checkbox" id="secretfinder" name="secretfinder" value="secretfinder">
+                  <label for="floatingInput">Secret Finder</label>
+                </div>
+              </div>
 
               <div class="d-grid mt-4">
                 <button
