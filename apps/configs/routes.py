@@ -67,7 +67,46 @@ def index():
 
         db.session.add(nikto)
         db.session.commit()
+
+    sfinder = Configs.query.filter_by(config_name='Secret Finder').first()
+    if not sfinder:
+        sfinder = Configs(
+                    config_name='Secret Finder'
+                )
+
+        db.session.add(sfinder)
+        db.session.commit()
+
     
+    gdorks = Configs.query.filter_by(config_name='Google Dorks').first()
+    if not gdorks:
+        gdorks = Configs(
+                    config_name='Google Dorks'
+                )
+
+        db.session.add(gdorks)
+        db.session.commit()
+
+    cmsseek = Configs.query.filter_by(config_name='CMSSeek').first()
+    if not cmsseek:
+        cmsseek = Configs(
+                    config_name='CMSSeek'
+                )
+
+        db.session.add(cmsseek)
+        db.session.commit()
+    
+
+    cmsscan = Configs.query.filter_by(config_name='CMSScan').first()
+    if not cmsscan:
+        cmsscan = Configs(
+                    config_name='CMSScan'
+                )
+
+        db.session.add(cmsscan)
+        db.session.commit()
+
+
     zap = Configs.query.filter_by(config_name='Zap').first()
     if not zap:
         zap = Configs(

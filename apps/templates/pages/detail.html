@@ -37,11 +37,9 @@
       <div class="col-sm-2 col-md-3 col-lg-2">
         <div class="card">
           <div class="card-body">
-            {% if tool.config_name == "Burp Suite"%}
-            {% if progress != None %}
+            {% if tool.config_name == "Burp Suite"%} {% if progress != None %}
             <span class="float-end text-muted"
               ><strong>
-                
                 {{progress['success']['scan_metrics']['crawl_and_audit_progress']}}%
               </strong></span
             >
@@ -51,9 +49,8 @@
                 {{progress['success']['scan_status']}}
               </div>
             </h4>
-            {% endif %}
-            {% endif %} {% if tool.config_name == "Zap"%}
-            {% if zap_progress != None %}
+            {% endif %} {% endif %} {% if tool.config_name == "Zap"%} {% if
+            zap_progress != None %}
             <span class="float-end text-muted"
               ><strong> {{zap_progress['success'][0]}}% </strong></span
             >
@@ -64,8 +61,7 @@
                 %} In Progress {% endif %}
               </div>
             </h4>
-            {% endif %}
-            {% endif %} {% if tool.config_name == "Nuclei"%}
+            {% endif %} {% endif %} {% if tool.config_name == "Nuclei"%}
             <span class="float-end text-muted"
               ><strong> {{nuclei_progress['progress']}}% </strong></span
             >
@@ -87,41 +83,50 @@
               </div>
             </h4>
 
-            {% endif %}
-          </div>
-        </div>
-
-        <!-- [ Main Content ] end -->
-      </div>
-      {% endfor %}
-
-      <div class="col-sm-2 col-md-3 col-lg-2">
-        <div class="card">
-          <div class="card-body">
+            {% endif %} {% if tool.config_name == "Secret Finder"%}
             <span class="float-end text-muted"
-              ><strong> {{secretfinder_progress['progress'] | int}}% </strong></span
+              ><strong>
+                {{secretfinder_progress['progress'] | int}}%
+              </strong></span
             >
-            <h4>Secret Finder</h4>
+            <h4>{{ tool.config_name }}</h4>
             <h4>
               <div class="badge bg-light-primary px-4">
                 {{secretfinder_progress['status']}}
               </div>
             </h4>
+
+            {% endif %}
+            
+            {% if tool.config_name == "CMSSeek"%}
+            <span class="float-end text-muted"
+              ><strong>
+                {{cmseek_progress['progress'] | int}}%
+              </strong></span
+            >
+            <h4>{{ tool.config_name }}</h4>
+            <h4>
+              <div class="badge bg-light-primary px-4">
+                {{cmseek_progress['status']}}
+              </div>
+            </h4>
+
+            {% endif %}
+
+
           </div>
         </div>
 
         <!-- [ Main Content ] end -->
       </div>
-
-      {% for tool in tools %}
+      {% endfor %} {% for tool in tools %}
       <div class="col-sm-12 col-md-12 col-lg-12">
         <div class="card">
           <div class="card-header">
             <h4>{{tool.config_name}}</h4>
           </div>
           <div class="card-body" style="max-height: 60vh; overflow-y: auto">
-            {% if tool.config_name == "Burp Suite"%}
-            {% if progress != None %}
+            {% if tool.config_name == "Burp Suite"%} {% if progress != None %}
             <h5>
               Crawl Requests Made:
               {{progress['success']['scan_metrics']['crawl_requests_made']}}
@@ -187,10 +192,9 @@
             <h5>Origin: {{issue['issue']['origin']}}</h5>
             <h5>Origin: {{issue['issue']['origin']}}</h5>
             <hr />
-            {% endfor %}{% endif %} {% endif %} {% if tool.config_name == "Zap"%}
-            {% if zap_progress != None %}
-            {% for
-            issue in zap_progress['success'][1] %}
+            {% endfor %}{% endif %} {% endif %} {% if tool.config_name ==
+            "Zap"%} {% if zap_progress != None %} {% for issue in
+            zap_progress['success'][1] %}
             <h5>Method: {{issue['method']}}</h5>
             <h5>Confidence: {{issue['confidence']}}</h5>
             <h5>Description:</h5>
@@ -200,9 +204,9 @@
             <h5>Solution: {{issue['solution']}}</h5>
 
             <hr />
-            {% endfor %}{% endif %}  {% endif %} {% if tool.config_name == "Nuclei"%} {% if
-            nuclei_progress['nuclei_data'] != None %} {% for issue in
-            nuclei_progress['nuclei_data'] %}
+            {% endfor %}{% endif %} {% endif %} {% if tool.config_name ==
+            "Nuclei"%} {% if nuclei_progress['nuclei_data'] != None %} {% for
+            issue in nuclei_progress['nuclei_data'] %}
             <h5>Vulnerability Name: {{issue['vulnerabilityName']}}</h5>
             <h5>Host: {{issue['host']}}</h5>
             <h5>Vulnerability Detail: {{issue['vulnerabilityDetail']}}</h5>
@@ -224,40 +228,56 @@
             <h5>Message: {{issue['msg']}}</h5>
 
             <hr />
+            {% endfor %} {% endif %} {% endif %} {% if tool.config_name ==
+            "Secret Finder" %} {% if secretfinder_progress['secretfinder_data']
+            != None %} {% for issue in
+            secretfinder_progress['secretfinder_data']%} {% for item in issue[1]
+            %}
+            <h5>URL: {{issue[0]}}</h5>
+            <h5>Matched: {{item['matched']}}</h5>
+            <h5>Context: {{item['context']}}</h5>
+            <h5>Name: {{item['name']}}</h5>
+            <h5>Multi Context: {{item['multi_context']}}</h5>
+            <hr />
+            {% endfor %}
+            <hr />
             {% endfor %} {% endif %} {% endif %}
+
+            {% if tool.config_name ==
+              "CMSSeek" %} {% if cmseek_progress['cmseek_data']
+              != None %}
+              <h5>CMS ID: {{ cmseek_progress['cmseek_data']['cms_id']}}</h5>
+              <h5>CMS Name: {{ cmseek_progress['cmseek_data']['cms_name']}}</h5>
+              <h5>CMS URL: {{ cmseek_progress['cmseek_data']['cms_url']}}</h5>
+              <h5>Detection Parameter: {{ cmseek_progress['cmseek_data']['detection_param']}}</h5>
+              <h5>Last Scanned: {{ cmseek_progress['cmseek_data']['last_scanned']}}</h5>
+              <h5>URL: {{ cmseek_progress['cmseek_data']['url']}}</h5>
+              <h5>WP Lincense: {{ cmseek_progress['cmseek_data']['wp_license']}}</h5>
+              <h5>WP Readme: {{ cmseek_progress['cmseek_data']['wp_readme_file']}}</h5>
+              <h5>WP Themes:</h5>
+              <ul>
+                {% for themes in  cmseek_progress['cmseek_data']['wp_themes'].split(',') %}
+                <li> {{themes}} </li>
+                {% endfor %}
+              </ul>
+              <h5>WP Plugins:</h5>
+              <ul>
+                {% for plugins in  cmseek_progress['cmseek_data']['wp_plugins'].split(',') %}
+                <li> {{plugins}} </li>
+                {% endfor %}
+              </ul>
+              
+            
+              <h5>WP Users: {{ cmseek_progress['cmseek_data']['wp_users']}}</h5>
+              <h5>WP Version: {{ cmseek_progress['cmseek_data']['wp_version']}}</h5>
+             
+              {% endif %} {% endif %}
           </div>
         </div>
 
         <!-- [ Main Content ] end -->
       </div>
       {% endfor %}
-
-      <div class="col-sm-12 col-md-12 col-lg-12">
-        <div class="card">
-          <div class="card-header">
-            <h4>Secret Finder</h4>
-          </div>
-          <div class="card-body" style="max-height: 60vh; overflow-y: auto">
-            
-            {% for issue in  secretfinder_progress['secretfinder_data']%}
-            {% for item in  issue[1] %}
-            <h5>URL:  {{issue[0]}}</h5>
-            <h5>Matched:  {{item['matched']}}</h5>
-            <h5>Context:  {{item['context']}}</h5>
-            <h5>Name:  {{item['name']}}</h5>
-            <h5>Multi Context:  {{item['multi_context']}}</h5>
-            <hr>
-            {% endfor %}
-            <hr>
-            {% endfor %}
-            
-           
-          
-          </div>
-        </div>
-
-        <!-- [ Main Content ] end -->
-      </div>
     </div>
     <!-- [ Main Content ] end -->
     {% endblock content %}

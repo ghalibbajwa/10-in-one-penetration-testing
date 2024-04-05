@@ -22,6 +22,8 @@ class Tests(db.Model, UserMixin):
     nuclei_data = db.Column(JSON, nullable=True)
     nikto_data = db.Column(JSON, nullable=True)
     secret_finder_data = db.Column(JSON, nullable=True)
+    cmseek_data = db.Column(JSON, nullable=True)
+    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

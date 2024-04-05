@@ -61,17 +61,15 @@
               <hr>
               <div class="row">
                 {% for tool in tools %}
-                <div class="col">
-                  
-                  <input type="checkbox" id={{tool.config_name}} name={{tool.config_name}} value={{tool.config_name}}>
-                  <label for="floatingInput">{{tool.config_name}}</label>
+                <div class="col-lg-3">
+                  <div class="row" >
+                  <div class="col-lg-1"> <input type="checkbox" id={{tool.config_name}} name={{tool.config_name}} value={{tool.config_name}}></div>
+                 <div class="col">  <label for="floatingInput">{{tool.config_name}}</label></div>
+
+                  </div>
                 </div>
                 {% endfor %}
-                <div class="col">
-                  
-                  <input type="checkbox" id="secretfinder" name="secretfinder" value="secretfinder">
-                  <label for="floatingInput">Secret Finder</label>
-                </div>
+            
               </div>
 
               <div class="d-grid mt-4">

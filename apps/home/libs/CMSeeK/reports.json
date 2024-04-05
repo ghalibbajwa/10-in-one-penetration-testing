@@ -1,0 +1,17 @@
+{
+    "last_updated": "2024-04-05 08:52:24.960342",
+    "results": [
+        {
+            "http://slogr.io": {
+                "cms_id": "wp",
+                "date": "2024-04-03 11:29:19.233683",
+                "report": "/mnt/d/sllogr/django-cyber/tool_testing/CMSeeK/Result/slogr.io/cms.json"
+            },
+            "https://vaporvm.com/": {
+                "cms_id": "wp",
+                "date": "2024-04-03 11:32:33.456364",
+                "report": "/mnt/d/sllogr/django-cyber/tool_testing/CMSeeK/Result/vaporvm.com/cms.json"
+            }
+        }
+    ]
+}

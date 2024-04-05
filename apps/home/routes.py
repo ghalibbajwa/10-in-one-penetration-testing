@@ -13,7 +13,7 @@ from sqlalchemy.orm import class_mapper
 from apps.home.forms import TestForm
 from apps.home.models import Tests
 from apps.configs.models import Configs
-from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl
+from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek
 from threading import Thread
 
 def sql_dict(obj):
@@ -39,6 +39,7 @@ def inject_user():
 @blueprint.route('/index')
 @login_required
 def index():
+
     test_form = TestForm()
     all_tests = Tests.query.all()
     all_tools = Configs.query.all()
@@ -154,6 +155,29 @@ def secretfinder_data(test=None):
             db.session.commit()    
         return "OK"
 
+
+
+@blueprint.route('/cmseek', methods=['POST'])
+def cmseek_data(test=None):
+
+        if(test != None):
+            test_dict=sql_dict(test)
+            #create and start cmseek scanning thread
+            thread = Thread(target=cmseek.run_test,args=[test_dict])
+            thread.start()
+            test.cmseek_data=["in Progress",0,{}]
+            
+
+        if(request.method == "POST" and test==None):
+  
+            content = request.json
+            test = Tests.query.get_or_404(content['test'])
+            test.cmseek_data=content['cmseek_data']
+            db.session.commit()    
+        return "OK"
+
+
+
 def check_progress(test):
     test_dict=sql_dict(test)
 
@@ -208,8 +232,20 @@ def check_progress(test):
             secretfinder_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'secretfinder_data':None}
     else:
             secretfinder_progress = {'progress':secretfinder_progress[1], 'status':secretfinder_progress[0], 'test':test.id,'secretfinder_data':secretfinder_progress[2]}
+
+
+    cmseek_progress = test.cmseek_data
+    if(cmseek_progress is None):
+            cmseek_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'cmseek_data':None}
+    else:
+            cmseek_progress = {'progress':cmseek_progress[1], 'status':cmseek_progress[0], 'test':test.id,'cmseek_data':cmseek_progress[2]}
+
+        
     
-    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress
+    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress
+
+
+    
 
         
 
@@ -263,9 +299,18 @@ def tests():
             #start nikto test
             nikto_data(new_test)
 
-        if('secretfinder' in request.form):
-            #start nikto test
+        if('Secret' in request.form):
+            #start secret finder test
             secretfinder_data(new_test)
+
+        if('CMSSeek' in request.form):
+           cmseek_data(new_test)
+        
+        if('CMSScan' in request.form):
+            print('CMSScan')
+        
+        if('Nessus' in request.form):
+            print('Nessus')
 
 
         all_tools = Configs.query.all()
@@ -296,12 +341,13 @@ def tests():
         nuclei_progress=""
         nessus_progress=""
         secretfinder_progress=""
+        cmseek_progress=""
 
-        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress = check_progress(test)
+        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress = check_progress(test)
 
         all_tools = Configs.query.all()
 
-        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress)
+        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress,cmseek_progress=cmseek_progress)
 
 
 
