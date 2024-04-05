@@ -15,3 +15,16 @@
                                               u$$$$$$$u$$$$$$$u
                                                u$"$"$"$"$"$"$u
 
+
+
+## Installation
+
+### Requires python version > 3.8
+
+```
+pip install -r requirements.txt
+```
+
+```
+python run.py
+```
