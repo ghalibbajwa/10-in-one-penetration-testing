@@ -28,3 +28,7 @@ pip install -r requirements.txt
 ```
 python run.py
 ```
+
+
+Open ```
+localhost:5000 ``` in browser
