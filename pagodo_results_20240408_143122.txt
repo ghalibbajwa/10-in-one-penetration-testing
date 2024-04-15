@@ -1,0 +1,5 @@
+# filetype:html
+http://testhtml5.vulnweb.com/static/app/partials/about.html
+http://testhtml5.vulnweb.com/static/app/partials/itemsList.html
+http://testhtml5.vulnweb.com/static/app/partials/redir.html
+##################################################

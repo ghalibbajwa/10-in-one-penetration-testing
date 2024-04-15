@@ -1,0 +1,18 @@
+{
+    "dorks": {
+        "filetype:html": {
+            "urls_size": 3,
+            "urls": [
+                "http://testhtml5.vulnweb.com/static/app/partials/about.html",
+                "http://testhtml5.vulnweb.com/static/app/partials/itemsList.html",
+                "http://testhtml5.vulnweb.com/static/app/partials/redir.html"
+            ]
+        },
+        "filetype:xml": {
+            "urls_size": 0,
+            "urls": []
+        }
+    },
+    "initiation_timestamp": "2024-04-08T14:31:22.505497",
+    "completion_timestamp": "2024-04-08T14:32:07.943444"
+}

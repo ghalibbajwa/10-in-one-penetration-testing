@@ -96,13 +96,20 @@
               </div>
             </h4>
 
-            {% endif %}
-            
-            {% if tool.config_name == "CMSSeek"%}
+            {% endif %} {% if tool.config_name == "Google Dorks"%}
             <span class="float-end text-muted"
-              ><strong>
-                {{cmseek_progress['progress'] | int}}%
-              </strong></span
+              ><strong> {{dork_progress['progress'] | int}}% </strong></span
+            >
+            <h4>{{ tool.config_name }}</h4>
+            <h4>
+              <div class="badge bg-light-primary px-4">
+                {{dork_progress['status']}}
+              </div>
+            </h4>
+
+            {% endif %} {% if tool.config_name == "CMSSeek"%}
+            <span class="float-end text-muted"
+              ><strong> {{cmseek_progress['progress'] | int}}% </strong></span
             >
             <h4>{{ tool.config_name }}</h4>
             <h4>
@@ -112,8 +119,6 @@
             </h4>
 
             {% endif %}
-
-
           </div>
         </div>
 
@@ -241,37 +246,59 @@
             <hr />
             {% endfor %}
             <hr />
-            {% endfor %} {% endif %} {% endif %}
+            {% endfor %} {% endif %} {% endif %} {% if tool.config_name ==
+            "CMSSeek" %} {% if cmseek_progress['cmseek_data'] != None %}
+            <h5>CMS ID: {{ cmseek_progress['cmseek_data']['cms_id']}}</h5>
+            <h5>CMS Name: {{ cmseek_progress['cmseek_data']['cms_name']}}</h5>
+            <h5>CMS URL: {{ cmseek_progress['cmseek_data']['cms_url']}}</h5>
+            <h5>
+              Detection Parameter: {{
+              cmseek_progress['cmseek_data']['detection_param']}}
+            </h5>
+            <h5>
+              Last Scanned: {{ cmseek_progress['cmseek_data']['last_scanned']}}
+            </h5>
+            <h5>URL: {{ cmseek_progress['cmseek_data']['url']}}</h5>
+            <h5>
+              WP Lincense: {{ cmseek_progress['cmseek_data']['wp_license']}}
+            </h5>
+            <h5>
+              WP Readme: {{ cmseek_progress['cmseek_data']['wp_readme_file']}}
+            </h5>
+            <h5>WP Themes:</h5>
+            <ul>
+              {% for themes in
+              cmseek_progress['cmseek_data']['wp_themes'].split(',') %}
+              <li>{{themes}}</li>
+              {% endfor %}
+            </ul>
+            <h5>WP Plugins:</h5>
+            <ul>
+              {% for plugins in
+              cmseek_progress['cmseek_data']['wp_plugins'].split(',') %}
+              <li>{{plugins}}</li>
+              {% endfor %}
+            </ul>
 
-            {% if tool.config_name ==
-              "CMSSeek" %} {% if cmseek_progress['cmseek_data']
-              != None %}
-              <h5>CMS ID: {{ cmseek_progress['cmseek_data']['cms_id']}}</h5>
-              <h5>CMS Name: {{ cmseek_progress['cmseek_data']['cms_name']}}</h5>
-              <h5>CMS URL: {{ cmseek_progress['cmseek_data']['cms_url']}}</h5>
-              <h5>Detection Parameter: {{ cmseek_progress['cmseek_data']['detection_param']}}</h5>
-              <h5>Last Scanned: {{ cmseek_progress['cmseek_data']['last_scanned']}}</h5>
-              <h5>URL: {{ cmseek_progress['cmseek_data']['url']}}</h5>
-              <h5>WP Lincense: {{ cmseek_progress['cmseek_data']['wp_license']}}</h5>
-              <h5>WP Readme: {{ cmseek_progress['cmseek_data']['wp_readme_file']}}</h5>
-              <h5>WP Themes:</h5>
-              <ul>
-                {% for themes in  cmseek_progress['cmseek_data']['wp_themes'].split(',') %}
-                <li> {{themes}} </li>
-                {% endfor %}
-              </ul>
-              <h5>WP Plugins:</h5>
-              <ul>
-                {% for plugins in  cmseek_progress['cmseek_data']['wp_plugins'].split(',') %}
-                <li> {{plugins}} </li>
-                {% endfor %}
-              </ul>
-              
+            <h5>WP Users: {{ cmseek_progress['cmseek_data']['wp_users']}}</h5>
+            <h5>
+              WP Version: {{ cmseek_progress['cmseek_data']['wp_version']}}
+            </h5>
+
+            {% endif %} {% endif %} 
+          
+            {% if tool.config_name == "Google Dorks" %}
             
-              <h5>WP Users: {{ cmseek_progress['cmseek_data']['wp_users']}}</h5>
-              <h5>WP Version: {{ cmseek_progress['cmseek_data']['wp_version']}}</h5>
-             
-              {% endif %} {% endif %}
+            {% if dork_progress['dork_data'] != None %}
+            
+            {% for dorks in dork_progress['dork_data']['dorks'] %}
+            
+            <h5>
+              {{dorks}}: {{ dork_progress['dork_data']['dorks'][dorks]}}
+            </h5>
+
+            {% endfor %}
+            {% endif %} {% endif %}
           </div>
         </div>
 

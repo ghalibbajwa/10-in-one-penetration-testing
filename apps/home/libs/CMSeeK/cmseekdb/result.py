@@ -25,6 +25,9 @@ def end(requestss, time, log_file,test_id):
     print(' ┃\n ┠── Result: ' + cmseek.bold + cmseek.fgreen + log_file + cmseek.cln)
     print(' ┃\n ┗━Scan Completed in ' + cmseek.bold +cmseek.lblue + time + cmseek.cln +' Seconds, using ' + cmseek.bold + cmseek.lblue + requestss + cmseek.cln +' Requests')
 
+    cmseek.handle_quit()
+
+    
     with open(log_file, 'r') as file:
     # Load the JSON data
         data = json.load(file)

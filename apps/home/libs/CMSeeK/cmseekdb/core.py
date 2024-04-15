@@ -74,7 +74,7 @@ def main_proc(site,cua,test_id):
     if scode == '':
         # silly little check thought it'd come handy
         cmseek.error('Aborting detection, source code empty')
-        return
+        return 
 
     cmseek.statement("Detection Started")
 
@@ -149,7 +149,7 @@ def main_proc(site,cua,test_id):
         if cms_info['deeps'] == '1' and not cmseek.light_scan and not cmseek.only_cms:
             # cmseek.success('Starting ' + cmseek.bold + cms_info['name'] + ' deep scan' + cmseek.cln)
             advanced.start(cms, site, cua, ga, scode, ga_content,test_id, detection_method, headers)
-            return
+            return 
         
         elif cms_info['vd'] == '1' and not cmseek.only_cms:
             cmseek.success('Starting version detection')
@@ -176,7 +176,7 @@ def main_proc(site,cua,test_id):
             cmseek.result("CMS URL: ", cms_info['url'])
             cmseek.update_log('cms_url', cms_info['url']) # update log
             '''
-            return
+            return log_file
         else:
             # nor version detect neither DeepScan available
             cmseek.clearscreen()
@@ -195,7 +195,7 @@ def main_proc(site,cua,test_id):
             cmseek.result("CMS URL: ", cms_info['url'])
             cmseek.update_log('cms_url', cms_info['url']) # update log
             '''
-            return
+            return log_file
     else:
         url = 'http://localhost:5000/cmseek'
         request_data = { 'test':test_id,'cmseek_data': ["CMS not Detected",100,None]}

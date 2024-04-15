@@ -313,7 +313,7 @@ def clear_log():
         warning('Results directory not found!')
         bye()
 
-def handle_quit(end_prog = True):
+def handle_quit(end_prog = False):
     # in case of unwanted exit this function should take care of writing the json log
     global log_dir
     if log_dir != "":

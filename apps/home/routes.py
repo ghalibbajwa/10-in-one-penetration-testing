@@ -13,7 +13,7 @@ from sqlalchemy.orm import class_mapper
 from apps.home.forms import TestForm
 from apps.home.models import Tests
 from apps.configs.models import Configs
-from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek
+from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek,dork
 from threading import Thread
 
 def sql_dict(obj):
@@ -178,6 +178,25 @@ def cmseek_data(test=None):
 
 
 
+@blueprint.route('/dork', methods=['POST'])
+def dork_data(test=None):
+
+        if(test != None):
+            test_dict=sql_dict(test)
+            #create and start dork scanning thread
+            thread = Thread(target=dork.start_dork,args=[test_dict])
+            thread.start()
+            test.dork_data=["in Progress",0,{}]
+            
+
+        if(request.method == "POST" and test==None):
+  
+            content = request.json
+            test = Tests.query.get_or_404(content['test'])
+            test.dork_data=content['dork_data']
+            db.session.commit()    
+        return "OK"
+
 def check_progress(test):
     test_dict=sql_dict(test)
 
@@ -234,15 +253,24 @@ def check_progress(test):
             secretfinder_progress = {'progress':secretfinder_progress[1], 'status':secretfinder_progress[0], 'test':test.id,'secretfinder_data':secretfinder_progress[2]}
 
 
+    #check cmsseek progress
     cmseek_progress = test.cmseek_data
     if(cmseek_progress is None):
             cmseek_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'cmseek_data':None}
     else:
             cmseek_progress = {'progress':cmseek_progress[1], 'status':cmseek_progress[0], 'test':test.id,'cmseek_data':cmseek_progress[2]}
 
+    
+     #check dork progress
+    dork_progress = test.dork_data
+    if(dork_progress is None):
+            dork_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'dork_data':None}
+    else:
+            dork_progress = {'progress':dork_progress[1], 'status':dork_progress[0], 'test':test.id,'dork_data':dork_progress[2]}
+
         
     
-    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress
+    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress
 
 
     
@@ -309,8 +337,8 @@ def tests():
         if('CMSScan' in request.form):
             print('CMSScan')
         
-        if('Nessus' in request.form):
-            print('Nessus')
+        if('Google' in request.form):
+            dork_data(new_test)
 
 
         all_tools = Configs.query.all()
@@ -343,11 +371,11 @@ def tests():
         secretfinder_progress=""
         cmseek_progress=""
 
-        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress = check_progress(test)
+        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress = check_progress(test)
 
         all_tools = Configs.query.all()
 
-        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress,cmseek_progress=cmseek_progress)
+        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress,cmseek_progress=cmseek_progress,dork_progress=dork_progress)
 
 
 
