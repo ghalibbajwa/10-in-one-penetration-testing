@@ -62,6 +62,8 @@
               </div>
             </h4>
             {% endif %} {% endif %} {% if tool.config_name == "Nuclei"%}
+            {% if
+              nuclei_progress['nuclei_data'] != None %}
             <span class="float-end text-muted"
               ><strong> {{nuclei_progress['progress']}}% </strong></span
             >
@@ -72,7 +74,9 @@
               </div>
             </h4>
 
-            {% endif %} {% if tool.config_name == "Nikto"%}
+            {% endif %} {% endif %} {% if tool.config_name == "Nikto"%}
+            {% if
+              nikto_progress['nikto_data'] != None %}
             <span class="float-end text-muted"
               ><strong> {{nikto_progress['progress']}}% </strong></span
             >
@@ -83,7 +87,9 @@
               </div>
             </h4>
 
-            {% endif %} {% if tool.config_name == "Secret Finder"%}
+            {% endif %} {% endif %} {% if tool.config_name == "Secret Finder"%}
+            {% if
+              secretfinder_progress['secretfinder_data'] != None %}
             <span class="float-end text-muted"
               ><strong>
                 {{secretfinder_progress['progress'] | int}}%
@@ -96,7 +102,9 @@
               </div>
             </h4>
 
-            {% endif %} {% if tool.config_name == "Google Dorks"%}
+            {% endif %} {% endif %} {% if tool.config_name == "Google Dorks"%}
+            {% if
+              dork_progress['dork_data'] != None %}
             <span class="float-end text-muted"
               ><strong> {{dork_progress['progress'] | int}}% </strong></span
             >
@@ -107,7 +115,9 @@
               </div>
             </h4>
 
-            {% endif %} {% if tool.config_name == "CMSSeek"%}
+            {% endif %} {% endif %}  {% if tool.config_name == "CMSSeek"%}
+            {% if
+              cmseek_progress['cmseek_data'] != None %}
             <span class="float-end text-muted"
               ><strong> {{cmseek_progress['progress'] | int}}% </strong></span
             >
@@ -118,7 +128,22 @@
               </div>
             </h4>
 
-            {% endif %}
+            {% endif %} {% endif %}
+
+            {% if tool.config_name == "CMSScan"%}
+            {% if
+              cmsscan_progress['cmsscan_data'] != None %}
+            <span class="float-end text-muted"
+              ><strong> {{cmsscan_progress['progress'] | int}}% </strong></span
+            >
+            <h4>{{ tool.config_name }}</h4>
+            <h4>
+              <div class="badge bg-light-primary px-4">
+                {{cmsscan_progress['status']}}
+              </div>
+            </h4>
+
+            {% endif %} {% endif %}
           </div>
         </div>
 
@@ -235,9 +260,15 @@
             <hr />
             {% endfor %} {% endif %} {% endif %} {% if tool.config_name ==
             "Secret Finder" %} {% if secretfinder_progress['secretfinder_data']
-            != None %} {% for issue in
-            secretfinder_progress['secretfinder_data']%} {% for item in issue[1]
+            != None %}
+            
+             {% for issue in
+            secretfinder_progress['secretfinder_data']%} 
+            
+            
+            {% for item in issue
             %}
+            
             <h5>URL: {{issue[0]}}</h5>
             <h5>Matched: {{item['matched']}}</h5>
             <h5>Context: {{item['context']}}</h5>
@@ -298,6 +329,58 @@
             </h5>
 
             {% endfor %}
+            {% endif %} {% endif %}
+
+
+            {% if tool.config_name ==
+              "CMSScan" %} {% if cmsscan_progress['cmsscan_data'] != None %}
+            
+              <h5>Target URL: {{ cmsscan_progress['cmsscan_data']["target_url"] }}</h5>
+              <h5>Target IP: {{ cmsscan_progress['cmsscan_data']['target_ip'] }}</h5>
+              <h5>Effective URL: {{ cmsscan_progress['cmsscan_data']['effective_url'] }}</h5>
+              <hr>
+              <h5>Interesting Findings:</h5>
+              <br>
+              {% for issues in cmsscan_progress['cmsscan_data']['interesting_findings'] %}
+              <h5>URL: {{ issues['url']}}</h5>
+              <h5>to_s: {{ issues['to_s']}}</h5>
+              <h5>Type: {{ issues['type']}}</h5>
+              <h5>Found By: {{ issues['found_by']}}</h5>
+              <h5>Confidence: {{ issues['confidence']}}</h5>
+              <h5>Confirmed By: {{ issues['confirmed_by']}}</h5>
+              <h5>References: {{ issues['references']}}</h5>
+              <h5>Interesting Entries: {{ issues['interesting_entries']}}</h5>
+              
+              
+              <hr>
+              {% endfor %}
+              <br>
+
+              <h5>Main Theme: {{ cmsscan_progress['cmsscan_data']['main_theme']['slug'] }}</h5>
+              <h5>Location: {{ cmsscan_progress['cmsscan_data']['main_theme']['location'] }}</h5>
+              <h5>Latest Version: {{ cmsscan_progress['cmsscan_data']['main_theme']['latest_version'] }}</h5>
+              <h5>Last Updated: {{ cmsscan_progress['cmsscan_data']['main_theme']['last_updated'] }}</h5>
+              <h5>Outdated: {{ cmsscan_progress['cmsscan_data']['main_theme']['outdated'] }}</h5>
+              <h5>Readme URL: {{ cmsscan_progress['cmsscan_data']['main_theme']['readme_url'] }}</h5>
+              <h5>Directory Listing: {{ cmsscan_progress['cmsscan_data']['main_theme']['directory_listing'] }}</h5>
+              <h5>Error Log URL: {{ cmsscan_progress['cmsscan_data']['main_theme']['error_log_url'] }}</h5>
+              <h5>Style URL: {{ cmsscan_progress['cmsscan_data']['main_theme']['style_url'] }}</h5>
+              <h5>Found By: {{ cmsscan_progress['cmsscan_data']['main_theme']['found_by'] }}</h5>
+              <h5>Confidence: {{ cmsscan_progress['cmsscan_data']['main_theme']['confidence'] }}</h5>
+              <h5>Confirmed By: {{ cmsscan_progress['cmsscan_data']['main_theme']['confirmed_by'] }}</h5>
+              
+              <h5>Style Name: {{ cmsscan_progress['cmsscan_data']['main_theme']['style_name'] }}</h5>
+              <h5>Style URI: {{ cmsscan_progress['cmsscan_data']['main_theme']['style_uri'] }}</h5>
+              <h5>Description: {{ cmsscan_progress['cmsscan_data']['main_theme']['description'] }}</h5>
+              <h5>Author: {{ cmsscan_progress['cmsscan_data']['main_theme']['author'] }}</h5>
+              <h5>Template: {{ cmsscan_progress['cmsscan_data']['main_theme']['template'] }}</h5>
+              <h5>License: {{ cmsscan_progress['cmsscan_data']['main_theme']['license'] }}</h5>
+              <h5>Text Domain: {{ cmsscan_progress['cmsscan_data']['main_theme']['text_domain'] }}</h5>
+              <h5>Confidence: {{ cmsscan_progress['cmsscan_data']['main_theme']['confidence'] }}</h5>
+              <h5>vuln_api: {{ cmsscan_progress['cmsscan_data']['vuln_api'] }}</h5>
+
+              
+              
             {% endif %} {% endif %}
           </div>
         </div>

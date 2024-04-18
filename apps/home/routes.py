@@ -4,7 +4,8 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from apps.home import blueprint
-from flask import current_app, render_template, request, url_for, redirect
+from flask import current_app, render_template, request, url_for, redirect,jsonify
+import json
 from flask_login import login_required,current_user
 from jinja2 import TemplateNotFound
 from apps import db
@@ -13,7 +14,7 @@ from sqlalchemy.orm import class_mapper
 from apps.home.forms import TestForm
 from apps.home.models import Tests
 from apps.configs.models import Configs
-from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek,dork
+from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek,dork,cmsscan
 from threading import Thread
 
 def sql_dict(obj):
@@ -79,6 +80,8 @@ def nuclei_data(test=None):
             #create and start nuclei scanning thread
             thread = Thread(target=nuclei.run_test,args=[nuclei_dict,test_dict])
             thread.start()
+            test.nuclei_data={'progress':0, 'status':"in progress", 'test':test['id'],'nuclei_data': ""}
+            db.session.commit() 
 
     
     if(request.method == "POST" and test==None):
@@ -166,6 +169,7 @@ def cmseek_data(test=None):
             thread = Thread(target=cmseek.run_test,args=[test_dict])
             thread.start()
             test.cmseek_data=["in Progress",0,{}]
+            db.session.commit() 
             
 
         if(request.method == "POST" and test==None):
@@ -173,6 +177,26 @@ def cmseek_data(test=None):
             content = request.json
             test = Tests.query.get_or_404(content['test'])
             test.cmseek_data=content['cmseek_data']
+            db.session.commit()    
+        return "OK"
+
+@blueprint.route('/cmsscan', methods=['POST'])
+def cmsscan_data(test=None):
+
+        if(test != None):
+            test_dict=sql_dict(test)
+            #create and start cmseek scanning thread
+            thread = Thread(target=cmsscan.run_test,args=[test_dict])
+            thread.start()
+            test.cmsscan_data=["in Progress",0,{}]
+            db.session.commit() 
+            
+
+        if(request.method == "POST" and test==None):
+  
+            content = request.json
+            test = Tests.query.get_or_404(content['test'])
+            test.cmsscan_data=content['cmsscan_data']
             db.session.commit()    
         return "OK"
 
@@ -187,7 +211,7 @@ def dork_data(test=None):
             thread = Thread(target=dork.start_dork,args=[test_dict])
             thread.start()
             test.dork_data=["in Progress",0,{}]
-            
+            db.session.commit() 
 
         if(request.method == "POST" and test==None):
   
@@ -260,6 +284,15 @@ def check_progress(test):
     else:
             cmseek_progress = {'progress':cmseek_progress[1], 'status':cmseek_progress[0], 'test':test.id,'cmseek_data':cmseek_progress[2]}
 
+
+
+    #check cmsscan progress
+    cmsscan_progress = test.cmsscan_data
+    if(cmsscan_progress is None):
+            cmsscan_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'cmsscan_data':None}
+    else:
+            cmsscan_progress = {'progress':cmsscan_progress[1], 'status':cmsscan_progress[0], 'test':test.id,'cmsscan_data':json.loads(cmsscan_progress[2])}
+
     
      #check dork progress
     dork_progress = test.dork_data
@@ -270,7 +303,7 @@ def check_progress(test):
 
         
     
-    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress
+    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress,cmsscan_progress
 
 
     
@@ -335,7 +368,7 @@ def tests():
            cmseek_data(new_test)
         
         if('CMSScan' in request.form):
-            print('CMSScan')
+            cmsscan_data(new_test)
         
         if('Google' in request.form):
             dork_data(new_test)
@@ -370,12 +403,13 @@ def tests():
         nessus_progress=""
         secretfinder_progress=""
         cmseek_progress=""
+        cmsscan_progress=""
 
-        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress = check_progress(test)
+        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress,cmsscan_progress = check_progress(test)
 
         all_tools = Configs.query.all()
 
-        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress,cmseek_progress=cmseek_progress,dork_progress=dork_progress)
+        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress,cmseek_progress=cmseek_progress,dork_progress=dork_progress,cmsscan_progress=cmsscan_progress)
 
 
 
