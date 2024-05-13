@@ -14,7 +14,7 @@ from sqlalchemy.orm import class_mapper
 from apps.home.forms import TestForm
 from apps.home.models import Tests
 from apps.configs.models import Configs
-from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek,dork,cmsscan
+from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek,dork,cmsscan,openvas
 from threading import Thread
 
 def sql_dict(obj):
@@ -207,19 +207,48 @@ def dork_data(test=None):
 
         if(test != None):
             test_dict=sql_dict(test)
+       
+           
             #create and start dork scanning thread
             thread = Thread(target=dork.start_dork,args=[test_dict])
             thread.start()
             test.dork_data=["in Progress",0,{}]
+        
             db.session.commit() 
 
         if(request.method == "POST" and test==None):
-  
+
             content = request.json
             test = Tests.query.get_or_404(content['test'])
             test.dork_data=content['dork_data']
-            db.session.commit()    
+            db.session.commit() 
+  
+             
         return "OK"
+
+
+@blueprint.route('/openvas', methods=['POST'])
+def openvas_data(test=None):
+    if(test != None):
+            test_dict=sql_dict(test)
+            #create and start openvas scanning thread
+            openvas_conf = Configs.query.filter_by(config_name='Openvas').first()
+            openvas_conf=sql_dict(openvas_conf)
+           
+            thread = Thread(target=openvas.run_test,args=[openvas_conf['config_endpoint'],test_dict])
+            thread.start()
+            test.openvas_data=["in Progress",0,{}]
+            db.session.commit() 
+
+    if(request.method == "POST" and test==None):
+
+        content = request.json
+        test = Tests.query.get_or_404(content['test'])
+        test.openvas_data=content['openvas_data']
+        test.openvas_id=str(content['report_id'])
+        
+        db.session.commit()    
+    return "OK"
 
 def check_progress(test):
     test_dict=sql_dict(test)
@@ -301,9 +330,20 @@ def check_progress(test):
     else:
             dork_progress = {'progress':dork_progress[1], 'status':dork_progress[0], 'test':test.id,'dork_data':dork_progress[2]}
 
+
+    openvas_progress = test.openvas_data
+    if(openvas_progress is None):
+            openvas_conf = Configs.query.filter_by(config_name='Openvas').first()
+            openvas_conf=sql_dict(openvas_conf)
+            openvas_data = openvas.check_progress(openvas_conf['config_endpoint'],test.openvas_id)
+            openvas_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'openvas_data':openvas_data}
+            test.openvas_data = openvas_data
+            db.session.commit()
+    else:
+            openvas_progress = {'progress':100, 'status':"Succeeded", 'test':test.id,'openvas_data':openvas_progress}
         
     
-    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress,cmsscan_progress
+    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress,cmsscan_progress,openvas_progress
 
 
     
@@ -340,7 +380,7 @@ def tests():
 
         db.session.add(new_test)
         db.session.commit()
-
+       
         if('Burp' in request.form):
             #start burpsuite test   
             burp_data(new_test)
@@ -373,6 +413,10 @@ def tests():
         if('Google' in request.form):
             dork_data(new_test)
 
+        if('Openvas' in request.form):
+            openvas_data(new_test)
+        
+
 
         all_tools = Configs.query.all()
         all_tests = Tests.query.all()
@@ -404,12 +448,13 @@ def tests():
         secretfinder_progress=""
         cmseek_progress=""
         cmsscan_progress=""
+        openvas_progress=""
 
-        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress,cmsscan_progress = check_progress(test)
+        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress,cmsscan_progress,openvas_progress = check_progress(test)
 
         all_tools = Configs.query.all()
 
-        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress,cmseek_progress=cmseek_progress,dork_progress=dork_progress,cmsscan_progress=cmsscan_progress)
+        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress,cmseek_progress=cmseek_progress,dork_progress=dork_progress,cmsscan_progress=cmsscan_progress,openvas_progress=openvas_progress)
 
 
 

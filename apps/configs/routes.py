@@ -119,6 +119,16 @@ def index():
         db.session.commit()
 
 
+    openvas = Configs.query.filter_by(config_name='Openvas').first()
+    if not openvas:
+        openvas = Configs(
+                    config_name='Openvas',
+                    config_endpoint='10.10.30.229'
+                )
+
+        db.session.add(openvas)
+        db.session.commit()
+
 
 
  

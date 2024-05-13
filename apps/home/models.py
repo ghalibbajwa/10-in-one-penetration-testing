@@ -18,6 +18,7 @@ class Tests(db.Model, UserMixin):
     burp_data = db.Column(JSON, nullable=True)
     zap_data = db.Column(JSON, nullable=True)
     zap_id = db.Column(db.Integer, nullable=True)
+    openvas_id = db.Column(db.String(225), nullable=True)
 
     nuclei_data = db.Column(JSON, nullable=True)
     nikto_data = db.Column(JSON, nullable=True)
@@ -25,6 +26,7 @@ class Tests(db.Model, UserMixin):
     cmseek_data = db.Column(JSON, nullable=True)
     dork_data = db.Column(JSON, nullable=True)
     cmsscan_data = db.Column(JSON, nullable=True)
+    openvas_data = db.Column(JSON, nullable=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

@@ -1,0 +1,14 @@
+{
+    "dorks": {
+        "filetype:html": {
+            "urls_size": 0,
+            "urls": []
+        },
+        "filetype:xml": {
+            "urls_size": 0,
+            "urls": []
+        }
+    },
+    "initiation_timestamp": "2024-04-29T09:25:53.622085",
+    "completion_timestamp": "2024-04-29T09:26:46.297552"
+}
