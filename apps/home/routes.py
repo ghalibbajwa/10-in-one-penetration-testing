@@ -14,7 +14,7 @@ from sqlalchemy.orm import class_mapper
 from apps.home.forms import TestForm
 from apps.home.models import Tests
 from apps.configs.models import Configs
-from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek,dork,cmsscan,openvas
+from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek,dork,cmsscan,openvas,nmap
 from threading import Thread
 
 def sql_dict(obj):
@@ -80,7 +80,7 @@ def nuclei_data(test=None):
             #create and start nuclei scanning thread
             thread = Thread(target=nuclei.run_test,args=[nuclei_dict,test_dict])
             thread.start()
-            test.nuclei_data={'progress':0, 'status':"in progress", 'test':test['id'],'nuclei_data': ""}
+            test.nuclei_data={'progress':0, 'status':"in progress", 'test':test_dict['id'],'nuclei_data': ""}
             db.session.commit() 
 
     
@@ -89,6 +89,28 @@ def nuclei_data(test=None):
         test = Tests.query.get_or_404(content['test'])
         
         test.nuclei_data = content
+        db.session.commit()
+
+    return "OK"
+
+@blueprint.route('/nmap', methods=['POST'])
+def nmap_data(test=None):
+    if(test != None):
+            
+            test_dict=sql_dict(test)
+          
+            #create and start nmap scanning thread
+            thread = Thread(target=nmap.run_test,args=[test_dict])
+            thread.start()
+            test.nmap_data={'progress':0, 'status':"in progress", 'test':test_dict['id'],'nmap_data': ""}
+            db.session.commit() 
+
+    
+    if(request.method == "POST" and test==None):
+        content = request.json
+        test = Tests.query.get_or_404(content['test'])
+        
+        test.nmap_data = content
         db.session.commit()
 
     return "OK"
@@ -288,6 +310,13 @@ def check_progress(test):
     if(nuclei_progress is None):
         nuclei_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'nuclei_data':None}
 
+
+     #check nmap progress
+    nmap_progress = test.nmap_data
+
+    if(nmap_progress is None):
+        nmap_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'nmap_data':None}
+
     
     #check nikto progress
     nikto_progress = test.nikto_data
@@ -329,21 +358,25 @@ def check_progress(test):
             dork_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'dork_data':None}
     else:
             dork_progress = {'progress':dork_progress[1], 'status':dork_progress[0], 'test':test.id,'dork_data':dork_progress[2]}
+    
 
-
-    openvas_progress = test.openvas_data
-    if(openvas_progress is None):
-            openvas_conf = Configs.query.filter_by(config_name='Openvas').first()
-            openvas_conf=sql_dict(openvas_conf)
-            openvas_data = openvas.check_progress(openvas_conf['config_endpoint'],test.openvas_id)
-            openvas_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'openvas_data':openvas_data}
-            test.openvas_data = openvas_data
-            db.session.commit()
-    else:
-            openvas_progress = {'progress':100, 'status':"Succeeded", 'test':test.id,'openvas_data':openvas_progress}
+    
+    try:
+        openvas_progress = test.openvas_data
+        if(openvas_progress is None):
+                openvas_conf = Configs.query.filter_by(config_name='Openvas').first()
+                openvas_conf=sql_dict(openvas_conf)
+                openvas_data = openvas.check_progress(openvas_conf['config_endpoint'],test.openvas_id)
+                openvas_progress = {'progress':0, 'status':"In Progress", 'test':test.id,'openvas_data':openvas_data}
+                test.openvas_data = openvas_data
+                db.session.commit()
+        else:
+                openvas_progress = {'progress':100, 'status':"Succeeded", 'test':test.id,'openvas_data':openvas_progress}
+    except:
+         pass
         
     
-    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress,cmsscan_progress,openvas_progress
+    return burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress,cmsscan_progress,openvas_progress,nmap_progress
 
 
     
@@ -385,8 +418,8 @@ def tests():
             #start burpsuite test   
             burp_data(new_test)
             
-        if('Nessus' in request.form):
-            print('Nessus')
+        if('Nmap' in request.form):
+            nmap_data(new_test)
 
         if('Nuclei' in request.form):
             #start nuclei test
@@ -449,12 +482,13 @@ def tests():
         cmseek_progress=""
         cmsscan_progress=""
         openvas_progress=""
+        nmap_progress=""
 
-        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress,cmsscan_progress,openvas_progress = check_progress(test)
+        burp_progress,zap_progress,nuclei_progress,nikto_progress,secretfinder_progress,cmseek_progress,dork_progress,cmsscan_progress,openvas_progress,nmap_progress = check_progress(test)
 
         all_tools = Configs.query.all()
 
-        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress,cmseek_progress=cmseek_progress,dork_progress=dork_progress,cmsscan_progress=cmsscan_progress,openvas_progress=openvas_progress)
+        return render_template('pages/detail.html',  test=test,tools=all_tools,progress=burp_progress,zap_progress=zap_progress,nuclei_progress=nuclei_progress,nikto_progress=nikto_progress,secretfinder_progress=secretfinder_progress,cmseek_progress=cmseek_progress,dork_progress=dork_progress,cmsscan_progress=cmsscan_progress,openvas_progress=openvas_progress,nmap_progress=nmap_progress)
 
 
 

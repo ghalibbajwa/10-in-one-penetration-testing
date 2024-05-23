@@ -35,17 +35,30 @@ def index():
         db.session.commit()
     
 
-    nessus = Configs.query.filter_by(config_name='Nessus').first()
-    if not nessus:
-        nessus = Configs(
-                    config_name='Nessus',
-                    config_endpoint='https://localhost:8834',
-                    config_username="admin",
-                    config_password = "admin"
+    # nessus = Configs.query.filter_by(config_name='Nessus').first()
+    # if not nessus:
+    #     nessus = Configs(
+    #                 config_name='Nessus',
+    #                 config_endpoint='https://localhost:8834',
+    #                 config_username="admin",
+    #                 config_password = "admin"
+    #             )
+
+    #     db.session.add(nessus)
+    #     db.session.commit()
+
+
+    nmap = Configs.query.filter_by(config_name='Nmap').first()
+    if not nmap:
+        nmap = Configs(
+                    config_name='Nmap',
+                    config_path="C:/nmap_3.1.10_windows_amd64"
                 )
 
-        db.session.add(nessus)
+        db.session.add(nmap)
         db.session.commit()
+
+
 
     nuclei = Configs.query.filter_by(config_name='Nuclei').first()
     if not nuclei:

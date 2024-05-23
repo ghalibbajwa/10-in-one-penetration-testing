@@ -27,6 +27,7 @@ class Tests(db.Model, UserMixin):
     dork_data = db.Column(JSON, nullable=True)
     cmsscan_data = db.Column(JSON, nullable=True)
     openvas_data = db.Column(JSON, nullable=True)
+    nmap_data = db.Column(JSON, nullable=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

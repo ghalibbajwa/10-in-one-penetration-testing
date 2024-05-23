@@ -73,6 +73,18 @@
               </div>
             </h4>
 
+            {% endif %} {% endif %} {% if tool.config_name == "Nmap"%} {% if
+            nmap_progress['nmap_data'] != None %}
+            <span class="float-end text-muted"
+              ><strong> {{nmap_progress['progress']}}% </strong></span
+            >
+            <h4>{{ tool.config_name }}</h4>
+            <h4>
+              <div class="badge bg-light-primary px-4">
+                {{nmap_progress['status']}}
+              </div>
+            </h4>
+
             {% endif %} {% endif %} {% if tool.config_name == "Nikto"%} {% if
             nikto_progress['nikto_data'] != None %}
             <span class="float-end text-muted"
@@ -136,7 +148,8 @@
             </h4>
 
             {% endif %} {% endif %} {% if tool.config_name == "Openvas"%} {% if
-            openvas_progress['openvas_data'] != None %}
+            openvas_progress['openvas_data'] != None %} {% if openvas_progress
+            != None %}
             <span class="float-end text-muted"
               ><strong> {{openvas_progress['progress'] | int}}% </strong></span
             >
@@ -147,7 +160,7 @@
               </div>
             </h4>
 
-            {% endif %} {% endif %}
+            {% endif %} {% endif %} {% endif %}
           </div>
         </div>
 
@@ -249,7 +262,130 @@
 
             <hr />
             {% endfor %} {% endif %} {% endif %} {% if tool.config_name ==
-            "Nikto"%} {% if nikto_progress['nikto_data'] != None %}
+            "Nmap"%} {% if nmap_progress['nmap_data'] != None %} 
+            
+             
+
+                <h1>Nmap Scan Results</h1>
+                
+                <h2>Scan Information</h2>
+                <table>
+                    
+                    <tr>
+                        <th>Start Time</th>
+                        <td>{{nmap_progress['nmap_data']['nmaprun']['@startstr']}}</td>
+                    </tr>
+                    <tr>
+                        <th>Version</th>
+                        <td>{{nmap_progress['nmap_data']['nmaprun']['@version']}}</td>
+                    </tr>
+                    <tr>
+                        <th>XML Output Version</th>
+                        <td>{{nmap_progress['nmap_data']['nmaprun']['@xmloutputversion']}}</td>
+                    </tr>
+                </table>
+            
+                <h2>Scan Details</h2>
+                <table>
+                    <tr>
+                        <th>Type</th>
+                        <td>{{nmap_progress['nmap_data']['nmaprun']['scaninfo']['@type']}}</td>
+                    </tr>
+                    <tr>
+                        <th>Protocol</th>
+                        <td>{{nmap_progress['nmap_data']['nmaprun']['scaninfo']['@protocol']}}</td>
+                    </tr>
+                    <tr>
+                        <th>Number of Services</th>
+                        <td>{{nmap_progress['nmap_data']['nmaprun']['scaninfo']['@numservices']}}</td>
+                    </tr>
+                    <tr>
+                        <th>Services</th>
+                        <td>{{nmap_progress['nmap_data']['nmaprun']['scaninfo']['@services']}}</td>
+                    </tr>
+                </table>
+            
+                <h2>Verbose and Debugging Levels</h2>
+                <table>
+                    <tr>
+                        <th>Verbose Level</th>
+                        <td>{{nmap_progress['nmap_data']['nmaprun']['verbose']['@level']}}</td>
+                    </tr>
+                    <tr>
+                        <th>Debugging Level</th>
+                        <td>{{nmap_progress['nmap_data']['nmaprun']['debugging']['@level']}}</td>
+                    </tr>
+                </table>
+            
+                <h2>Script Outputs</h2>
+                <div class="script-output">
+                    <h3>broadcast-listener</h3>
+                    <p>Output: {{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][0]['@output']}}</p>
+                </div>
+                <div class="script-output">
+                    <h3>targets-asn</h3>
+                    <p>Output: {{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][1]['@output']}}</p>
+                </div>
+                <div class="script-output">
+                    <h3>http-robtex-shared-ns</h3>
+                    <p>Output: {{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][2]['@output']}}</p>
+                </div>
+                <div class="script-output">
+                    <h3>eap-info</h3>
+                    <p>Output: {{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][3]['@output']}}</p>
+                </div>
+                <div class="script-output">
+                    <h3>hostmap-robtex</h3>
+                    <p>Output: {{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][4]['@output']}}</p>
+                </div>
+                <div class="script-output">
+                    <h3>broadcast-dhcp-discover</h3>
+                    <p>Output: {{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][5]['@output']}}</p>
+                    <table>
+                        <tr>
+                            <th>Key</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Interface</td>
+                            <td>{{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][5]['table']['elem'][0]['#text']}}</td>
+                        </tr>
+                        <tr>
+                            <td>IP Offered</td>
+                            <td>{{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][5]['table']['elem'][1]['#text']}}</td>
+                        </tr>
+                        <tr>
+                            <td>DHCP Message Type</td>
+                            <td>{{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][5]['table']['elem'][2]['#text']}}</td>
+                        </tr>
+                        <tr>
+                            <td>Server Identifier</td>
+                            <td>{{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][5]['table']['elem'][3]['#text']}}</td>
+                        </tr>
+                        <tr>
+                            <td>IP Address Lease Time</td>
+                            <td>{{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][5]['table']['elem'][4]['#text']}}</td>
+                        </tr>
+                        <tr>
+                            <td>Subnet Mask</td>
+                            <td>{{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][5]['table']['elem'][5]['#text']}}</td>
+                        </tr>
+                        <tr>
+                            <td>Router</td>
+                            <td>{{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][5]['table']['elem'][6]['#text']}}</td>
+                        </tr>
+                        <tr>
+                            <td>Domain Name Server</td>
+                            <td>{{nmap_progress['nmap_data']['nmaprun']['prescript']['script'][5]['table']['elem'][7]['#text']}}</td>
+                        </tr>
+                    </table>
+                </div>
+            
+          
+
+            {% endif %} {%
+            endif %} {% if tool.config_name == "Nikto"%} {% if
+            nikto_progress['nikto_data'] != None %}
 
             <h5>Host: {{nikto_progress['nikto_data'][0]['host']}}</h5>
             <h5>IP: {{nikto_progress['nikto_data'][0]['ip']}}</h5>
@@ -441,7 +577,8 @@
             </h5>
 
             {% endif %} {% endif %} {% if tool.config_name == "Openvas" %} {% if
-            openvas_progress['openvas_data'] != None %}
+            openvas_progress['openvas_data'] != None %} {% if openvas_progress
+            != None %}
             <div class="report-section">
               <h2>Report Details</h2>
               <p>
@@ -523,7 +660,7 @@
               </table>
             </div>
 
-            {% endif %} {% endif %}
+            {% endif %} {% endif %} {% endif %}
           </div>
         </div>
 
@@ -545,3 +682,21 @@
   }
 </script>
 {% endblock extra_js %}
+
+<style>
+  table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .script-output {
+            margin-bottom: 20px;
+        }
+</style>
