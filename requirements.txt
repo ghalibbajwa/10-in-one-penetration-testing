@@ -19,6 +19,9 @@ pynuclei
 jsbeautifier
 requests_file
 lxml
+yagooglesearch
+python-gvm
+xmltodict
 
 
 # flask_mysqldb
