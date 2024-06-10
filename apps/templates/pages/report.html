@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/reporting.css') }}" />
 <div class="container">
+    <button id="download">Download as PDF</button>
     <div class="logo">
         <img  src="{{ url_for('static', filename='assets/images/VVM-Master-Logo.png') }}" alt="Company Logo">
     </div>
@@ -281,5 +282,25 @@
         ctx.fillText(labels[index], labelX, labelY);
 
         startAngle = endAngle;
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script>
+    document.getElementById('download').addEventListener('click', function () {
+        // Choose the element that contains the HTML content you want to convert
+        var element = document.body;
+
+        // Use the html2pdf library to create a PDF
+        html2pdf()
+                .from(element)
+                .set({
+                    margin: 1,
+                    filename: 'document.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+                    pagebreak: { mode: 'avoid-all' }
+                })
+                .save();
     });
 </script>
