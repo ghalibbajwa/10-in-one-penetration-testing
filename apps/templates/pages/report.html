@@ -1,5 +1,4 @@
 
-{% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/reporting.css') }}" />
 <div class="container">
@@ -36,7 +35,7 @@
         <li><a href="#appendix">7. Appendix</a></li>
     </ul>
 
-    <h2 id="executive-summary">Executive Summary</h2>
+    <h2 id="executive-summary" class="html2pdf__page-break">Executive Summary</h2>
     <p>This report presents the results of penetration testing activity conducted on the Company Names mobile applications. The assessment was performed by VaporVM United Arab Emirates and it took 5 days to complete. Testing was mainly based on enumeration misconfigurations assessment and manual identification of vulnerabilities. The results of the assessment were used to develop recommendations and action plans to address identified security gaps.</p>
 
     <h3 id="scoping">Scoping and Time Limitations</h3>
@@ -54,10 +53,10 @@
     <h3 id="recommendations">High-Level Recommendations</h3>
     <p>The following actionable recommendations along with priority have been listed below: Although the main defense of jailbreak detection bypass is well implemented and not bypassed with the available tools and techniques, no actionable recommendations are required for Target Name.</p>
 
-    <h2 id="overview">Assessment Overview</h2>
+    <h2 id="overview" class="html2pdf__page-break">Assessment Overview</h2>
     <p>From 9th June 2023 to 15th June 2023, Company Name engaged VaporVM to conduct a Mobile Application Security Assessment. The assessment aimed to identify, validate, and prioritize vulnerabilities within the mobile application based on their impact and exploitability. The assessment was performed using industry-standard testing methodologies such as the OWASP Mobile Application Security Verification Standard (MASVS) testing guide and customized testing frameworks.</p>
 
-    <h2 id="severity-ratings">Finding Severity Ratings</h2>
+    <h2 id="severity-ratings" class="html2pdf__page-break">Finding Severity Ratings</h2>
     <table class="severity-table">
         <thead>
             <tr>
@@ -122,7 +121,7 @@
         <li>Other exploits impacting services and business continuity.</li>
     </ul>
 
-    <h2 id="vulnerability-summary">Vulnerability Summary & Report Card</h2>
+    <h2 id="vulnerability-summary" class="html2pdf__page-break">Vulnerability Summary & Report Card</h2>
     <p>The following tables illustrate the vulnerabilities found by impact and recommended remediations:</p>
     <table class="severity-table">
         <thead>
@@ -148,7 +147,7 @@
     </div>
     <br>
 
-    <h3>Vulnerability Details</h3>
+    <h3 class="html2pdf__page-break">Vulnerability Details</h3>
     <br>
     <h4>VULNERABILITY TITLE</h4>
     <table class="severity-table">
@@ -189,7 +188,7 @@
     </table>    
    <br>
    <hr>
-    <h2 id="document-management">Document Management</h2>
+    <h2 id="document-management" class="html2pdf__page-break">Document Management</h2>
     <h3>Document Control</h3>
     <table class="document-control-table">
         <thead>
@@ -234,7 +233,7 @@
         </tbody>
     </table>
 
-    <h3>Disclaimer</h3>
+    <h3 class="html2pdf__page-break">Disclaimer</h3>
     <p>The report contains confidential information about the security vulnerabilities and misconfigurations observed in the tested assets. Access to this report by unauthorized personnel may allow them to compromise the organization's assets, data, or network.</p>
 
     <h2 id="appendix">Appendix</h2>
@@ -249,8 +248,6 @@
     </ul>
 </div>
  
-{% endblock content %}
-
 <script>
     const canvas = document.getElementById('pieChart');
     const ctx = canvas.getContext('2d');
@@ -294,12 +291,13 @@
         html2pdf()
                 .from(element)
                 .set({
-                    margin: 1,
+                    margin: [0.5,0],
                     filename: 'document.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true },
                     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-                    pagebreak: { mode: 'avoid-all' }
+                    pagebreak: { before: '.html2pdf__page-break' },
+                    enableLinks:false
                 })
                 .save();
     });
