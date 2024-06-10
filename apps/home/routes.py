@@ -4,7 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from apps.home import blueprint
-from flask import current_app, render_template, request, url_for, redirect,jsonify
+from flask import app, current_app, make_response, render_template, request, url_for, redirect,jsonify
 import json
 from flask_login import login_required,current_user
 from jinja2 import TemplateNotFound
@@ -16,6 +16,9 @@ from apps.home.models import Tests
 from apps.configs.models import Configs
 from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek,dork,cmsscan,openvas,nmap
 from threading import Thread
+import datetime
+import pdfkit
+
 
 def sql_dict(obj):
     """Converts a SQLAlchemy object to a dictionary."""
@@ -496,6 +499,17 @@ def tests():
 
 
 
+
+
+
+@blueprint.route('/report', methods=['GET', 'POST'])
+@login_required
+def reports():
+    date=datetime.date.today()
+    # rendered = render_template('pages/report.html', date=date)
+    # pdfkit.from_string(rendered, 'out.pdf',options={"enable-local-file-access": ""})
+    
+    return render_template('pages/report.html',date=date)
 
 
 

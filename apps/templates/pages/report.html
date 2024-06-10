@@ -1,0 +1,285 @@
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/reporting.css') }}" />
+<div class="container">
+    <div class="logo">
+        <img  src="{{ url_for('static', filename='assets/images/VVM-Master-Logo.png') }}" alt="Company Logo">
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-6">
+            <h1>Penetration Testing Report</h1>
+        </div>
+        <div class="col-6" >
+            <img  src="{{ url_for('static', filename='assets/images/VVM-Master-Logo.png') }}" alt="Company Logo"  id="vendorlogo">
+        </div>
+    </div>
+    
+    <p><strong>Date:</strong> {{date}}</p>
+    <p><strong>Version:</strong> 1.0</p>
+
+    <h2>Table of Contents</h2>
+    <ul class="toc">
+        <li><a href="#executive-summary">1. Executive Summary</a></li>
+        <li><a href="#scoping">1.1 Scoping and Time Limitations</a></li>
+        <li><a href="#testing-summary">1.2 Testing Summary</a></li>
+        <li><a href="#mobile-testing">1.3 Mobile App Penetration Testing</a></li>
+        <li><a href="#conclusion">1.4 Conclusion</a></li>
+        <li><a href="#recommendations">1.5 High-Level Recommendations</a></li>
+        <li><a href="#overview">2. Assessment Overview</a></li>
+        <li><a href="#severity-ratings">3. Finding Severity Ratings</a></li>
+        <li><a href="#scope">4. Scope</a></li>
+        <li><a href="#vulnerability-summary">5. Vulnerability Summary & Report Card</a></li>
+        <li><a href="#document-management">6. Document Management</a></li>
+        <li><a href="#appendix">7. Appendix</a></li>
+    </ul>
+
+    <h2 id="executive-summary">Executive Summary</h2>
+    <p>This report presents the results of penetration testing activity conducted on the Company Names mobile applications. The assessment was performed by VaporVM United Arab Emirates and it took 5 days to complete. Testing was mainly based on enumeration misconfigurations assessment and manual identification of vulnerabilities. The results of the assessment were used to develop recommendations and action plans to address identified security gaps.</p>
+
+    <h3 id="scoping">Scoping and Time Limitations</h3>
+    <p>The scope limitations for this current engagement involved not to perform social engineering DDOS on the scoped application. Scoping during the engagement did not permit social engineering across all testing components.</p>
+
+    <h3 id="testing-summary">Testing Summary</h3>
+    <p>Company Names mobile applications were tested under the current assignment. The purpose of the engagement was to perform a comprehensive review of the security posture of the mobile application without any prior knowledge of its internal workings. The objective of the testing was to identify vulnerabilities that could be exploited by attackers and to assess the application's ability to withstand various attacks. The testing included a range of techniques such as manual testing, automated scanning, and vulnerability analysis. This was done to evaluate the security posture of Company Name against the industrys best practices, validate its security mechanisms, and identify vulnerabilities at the application level and within the source code.</p>
+
+    <h3 id="mobile-testing">Mobile App Penetration Testing</h3>
+    <p>VaporVM conducted a comprehensive security assessment of Company Name's mobile applications. The mobile application was analyzed from an external attackers perspective. The applications were tested for vulnerabilities and security flaws using various techniques such as static and dynamic analysis and reverse engineering.</p>
+
+    <h3 id="conclusion">Conclusion</h3>
+    <p>It was concluded that the tested mobile applications were well-configured with moderate security controls. The team has performed all the test cases to bypass implemented security controls. Moreover, it was observed that the tested applications have certain security controls to protect the application to run on rooted phones and prevent reverse engineering. The methodology used during the activity was the OWASP Mobile Application Security Verification Standard (MASVS) testing guide.</p>
+
+    <h3 id="recommendations">High-Level Recommendations</h3>
+    <p>The following actionable recommendations along with priority have been listed below: Although the main defense of jailbreak detection bypass is well implemented and not bypassed with the available tools and techniques, no actionable recommendations are required for Target Name.</p>
+
+    <h2 id="overview">Assessment Overview</h2>
+    <p>From 9th June 2023 to 15th June 2023, Company Name engaged VaporVM to conduct a Mobile Application Security Assessment. The assessment aimed to identify, validate, and prioritize vulnerabilities within the mobile application based on their impact and exploitability. The assessment was performed using industry-standard testing methodologies such as the OWASP Mobile Application Security Verification Standard (MASVS) testing guide and customized testing frameworks.</p>
+
+    <h2 id="severity-ratings">Finding Severity Ratings</h2>
+    <table class="severity-table">
+        <thead>
+            <tr>
+                <th>Severity</th>
+                <th>Definition</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr >
+                <td class="critical">Critical</td>
+                <td>Exploitation is straightforward and usually results in system-level compromise. It is advised to form a plan of action and patch immediately.</td>
+            </tr>
+            <tr>
+                <td class="high">High</td>
+                <td>Exploitation is more difficult but could cause elevated privileges and potentially a loss of data or downtime. It is advised to form a plan of action and patch as soon as possible.</td>
+            </tr>
+            <tr>
+                <td class="medium">Medium</td>
+                <td>Vulnerabilities exist but are not exploitable or require extra steps such as social engineering. It is advised to form a plan of action and patch after high-priority issues have been resolved.</td>
+            </tr>
+            <tr>
+                <td class="low">Low</td>
+                <td>Vulnerabilities are non-exploitable but would reduce an organizations attack surface. It is advised to form a plan of action and patch during the next maintenance window.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="scope">Scope</h2>
+    <h3>Penetration Testing</h3>
+    <p>The scope as defined in the RFP for assets to be tested and their count is mentioned below:</p>
+    <table class="severity-table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Scope</th>
+                <th>Assets</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Mobile Application</td>
+                <td>ASSET NAME</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td colspan="3"><strong>Total Counts</strong></td>
+                <td>1</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Scope Exclusions</h3>
+    <p>For the scope of the activity, the following activities were not part of the scope:</p>
+    <ul>
+        <li>Conduct Phishing Campaign against Company Name employees.</li>
+        <li>Vulnerability exploitation on Critical production servers.</li>
+        <li>The exploitation of vulnerabilities resulting in DoS.</li>
+        <li>The exploitation of vulnerabilities requiring initial access/client-side testing.</li>
+        <li>Using Brute Force attempts to gain access.</li>
+        <li>Other exploits impacting services and business continuity.</li>
+    </ul>
+
+    <h2 id="vulnerability-summary">Vulnerability Summary & Report Card</h2>
+    <p>The following tables illustrate the vulnerabilities found by impact and recommended remediations:</p>
+    <table class="severity-table">
+        <thead>
+            <tr>
+                <th class="critical">Critical</th>
+                <th class="high">High</th>
+                <th class="medium">Medium</th>
+                <th class="low">Low</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>1</td>
+                <td>0</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <div style="text-align: center; width: 100%;;">
+    <canvas id="pieChart" width="400" height="400"></canvas>
+    </div>
+    <br>
+
+    <h3>Vulnerability Details</h3>
+    <br>
+    <h4>VULNERABILITY TITLE</h4>
+    <table class="severity-table">
+        <thead>
+            <tr>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th class="vul_label">Risk Rating</th>
+                <th class="critical">Critical</th>
+            </tr>
+            <tr>
+                <th class="vul_label">Tools/Tech. Used</th>
+                <th class="">Automated Testing and Manual Validation</th>
+            </tr>
+            <tr>
+                <th class="vul_label">Observation</th>
+                <th class="">Critical</th>
+            </tr>
+            <tr>
+                <th class="vul_label">Implications</th>
+                <th class="">Critical</th>
+            </tr>
+            <tr>
+                <th class="vul_label">Recommendation</th>
+                <th class="">Critical</th>
+            </tr>
+            <tr>
+                <th class="vul_label">Affected Assets</th>
+                <th class="">Critical</th>
+            </tr>
+            <tr>
+                <th class="vul_label">Evidence</th>
+                <th class="">Critical</th>
+            </tr>
+        </tbody>
+    </table>    
+   <br>
+   <hr>
+    <h2 id="document-management">Document Management</h2>
+    <h3>Document Control</h3>
+    <table class="document-control-table">
+        <thead>
+            <tr>
+                <th>Document Type</th>
+                <th>Mobile Application Penetration Testing Report</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Client Name</td>
+                <td>Company Name</td>
+            </tr>
+            <tr>
+                <td>Assets</td>
+                <td>Asset Name</td>
+            </tr>
+            <tr>
+                <td>Testing Performed By</td>
+                <td>VaporVM</td>
+            </tr>
+            <tr>
+                <td>Duration</td>
+                <td>Business Days</td>
+            </tr>
+            <tr>
+                <td>Start Date</td>
+                <td>Date June 2023</td>
+            </tr>
+            <tr>
+                <td>Completion Date</td>
+                <td>Date June 2023</td>
+            </tr>
+            <tr>
+                <td>Classification</td>
+                <td>Confidential</td>
+            </tr>
+            <tr>
+                <td>Version</td>
+                <td>1.0</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Disclaimer</h3>
+    <p>The report contains confidential information about the security vulnerabilities and misconfigurations observed in the tested assets. Access to this report by unauthorized personnel may allow them to compromise the organization's assets, data, or network.</p>
+
+    <h2 id="appendix">Appendix</h2>
+    <h3>Mobile Application Assessment</h3>
+    <p>Mobile application assessment is the process of evaluating the security, privacy, and functionality of a mobile application. The main goal of this process is to identify any vulnerabilities, weaknesses, or other security risks that could be exploited by attackers. The assessment is typically performed by security experts who use various testing methodologies and tools to examine the application and its code.</p>
+    <p>The stages of mobile application assessment can vary depending on the methodology used but generally involve the following:</p>
+    <ul>
+        <li><strong>Reconnaissance:</strong> In this stage, the assessment team gathers information about the application, including its purpose, features, and functionality. This can involve examining the application's code, analyzing network traffic, and reviewing documentation.</li>
+        <li><strong>Static Analysis:</strong> This stage involves analyzing the application's code without executing it to identify any vulnerabilities or weaknesses.</li>
+        <li><strong>Dynamic Analysis:</strong> This stage involves testing the application in a live environment to evaluate its behavior under different conditions and identify any vulnerabilities or weaknesses.</li>
+        <li><strong>Reporting:</strong> In this stage, the assessment team prepares a detailed report of their findings, including recommendations for remediation or mitigation of any identified vulnerabilities or weaknesses.</li>
+    </ul>
+</div>
+ 
+{% endblock content %}
+
+<script>
+    const canvas = document.getElementById('pieChart');
+    const ctx = canvas.getContext('2d');
+
+    const data = [1, 2, 5, 3];
+    const labels = ['Critical', 'High', 'Medium', 'Low']
+    const colors = ['red', 'rgb(255, 104, 17)', 'rgb(253, 240, 66)', 'rgb(149, 248, 127)'];
+
+    const total = data.reduce((sum, value) => sum + value, 0);
+    let startAngle = 0;
+
+    data.forEach((value, index) => {
+        const sliceAngle = (value / total) * 2 * Math.PI;
+        const endAngle = startAngle + sliceAngle;
+
+        // Draw slice
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, canvas.height / 2);
+        ctx.arc(canvas.width / 2, canvas.height / 2, canvas.height / 2, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = colors[index];
+        ctx.fill();
+
+        // Draw label
+        const midAngle = startAngle + sliceAngle / 2;
+        const labelX = canvas.width / 2 + (canvas.height / 2.5) * Math.cos(midAngle);
+        const labelY = canvas.height / 2 + (canvas.height / 2.5) * Math.sin(midAngle);
+        ctx.fillStyle = '#000';
+        ctx.fillText(labels[index], labelX, labelY);
+
+        startAngle = endAngle;
+    });
+</script>
