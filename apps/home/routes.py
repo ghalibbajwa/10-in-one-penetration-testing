@@ -17,7 +17,20 @@ from apps.configs.models import Configs
 from apps.home.libs import burp,zap,nuclei,nikto,waybackcurl,cmseek,dork,cmsscan,openvas,nmap
 from threading import Thread
 import datetime
-import pdfkit
+import queue
+
+def worker(q):
+    while True:
+        task, args = q.get()
+        if task is None:
+            break
+        task(*args)
+        q.task_done()
+
+q = queue.Queue()
+
+Thread(target=worker, args=(q,), daemon=True).start()
+
 
 
 def sql_dict(obj):
@@ -60,8 +73,9 @@ def nikto_data(test=None):
             test_dict=sql_dict(test)
           
             #create and start nikto scanning thread
-            thread = Thread(target=nikto.run_test,args=[nikto_dict,test_dict])
-            thread.start()
+            #thread = Thread(target=nikto.run_test,args=[nikto_dict,test_dict])
+            #thread.start()
+            q.put((nikto.run_test, (nikto_dict,test_dict)))
 
     if(request.method == "POST" and test==None):
         content = request.json
@@ -81,8 +95,10 @@ def nuclei_data(test=None):
             test_dict=sql_dict(test)
           
             #create and start nuclei scanning thread
-            thread = Thread(target=nuclei.run_test,args=[nuclei_dict,test_dict])
-            thread.start()
+            # thread = Thread(target=nuclei.run_test,args=[nuclei_dict,test_dict])
+            # thread.start()
+
+            q.put((nuclei.run_test, (nuclei_dict,test_dict)))
             test.nuclei_data={'progress':0, 'status':"in progress", 'test':test_dict['id'],'nuclei_data': ""}
             db.session.commit() 
 
@@ -103,8 +119,10 @@ def nmap_data(test=None):
             test_dict=sql_dict(test)
           
             #create and start nmap scanning thread
-            thread = Thread(target=nmap.run_test,args=[test_dict])
-            thread.start()
+            # thread = Thread(target=nmap.run_test,args=[test_dict])
+            # thread.start()
+
+            q.put((nmap.run_test, (test_dict,)))
             test.nmap_data={'progress':0, 'status':"in progress", 'test':test_dict['id'],'nmap_data': ""}
             db.session.commit() 
 
@@ -129,8 +147,9 @@ def zap_data(test=None):
             test_dict=sql_dict(test)
           
             #create and start zap scanning thread
-            thread = Thread(target=zap.run_test,args=[zap_dict,test_dict])
-            thread.start()
+            # thread = Thread(target=zap.run_test,args=[zap_dict,test_dict])
+            # thread.start()
+            q.put((zap.run_test, (zap_dict,test_dict)))
 
         if(request.method == "POST" and test==None):
   
@@ -153,8 +172,10 @@ def burp_data(test=None):
             test_dict=sql_dict(test)
     
             #create and start burp scanning thread
-            thread = Thread(target=burp.run_test,args=[burp_dict,test_dict])
-            thread.start()
+            # thread = Thread(target=burp.run_test,args=[burp_dict,test_dict])
+            # thread.start()
+
+            q.put((burp.run_test, (burp_dict,test_dict)))
 
         if(request.method == "POST" and test==None):
   
@@ -172,8 +193,10 @@ def secretfinder_data(test=None):
         if(test != None):
             test_dict=sql_dict(test)
             #create and start secretfinder scanning thread
-            thread = Thread(target=waybackcurl.start_secret_finder,args=[test_dict])
-            thread.start()
+            # thread = Thread(target=waybackcurl.start_secret_finder,args=[test_dict])
+            # thread.start()
+            q.put((waybackcurl.start_secret_finder, (test_dict,)))
+
 
         if(request.method == "POST" and test==None):
   
@@ -191,8 +214,12 @@ def cmseek_data(test=None):
         if(test != None):
             test_dict=sql_dict(test)
             #create and start cmseek scanning thread
-            thread = Thread(target=cmseek.run_test,args=[test_dict])
-            thread.start()
+            # thread = Thread(target=cmseek.run_test,args=[test_dict])
+            # thread.start()
+
+
+            q.put((cmseek.run_test, (test_dict,)))
+
             test.cmseek_data=["in Progress",0,{}]
             db.session.commit() 
             
@@ -211,8 +238,12 @@ def cmsscan_data(test=None):
         if(test != None):
             test_dict=sql_dict(test)
             #create and start cmseek scanning thread
-            thread = Thread(target=cmsscan.run_test,args=[test_dict])
-            thread.start()
+            # thread = Thread(target=cmsscan.run_test,args=[test_dict])
+            # thread.start()
+
+            q.put((cmsscan.run_test, (test_dict,)))
+
+
             test.cmsscan_data=["in Progress",0,{}]
             db.session.commit() 
             
@@ -235,8 +266,10 @@ def dork_data(test=None):
        
            
             #create and start dork scanning thread
-            thread = Thread(target=dork.start_dork,args=[test_dict])
-            thread.start()
+            # thread = Thread(target=dork.start_dork,args=[test_dict])
+            # thread.start()
+
+            q.put((dork.start_dork, (test_dict,)))
             test.dork_data=["in Progress",0,{}]
         
             db.session.commit() 
@@ -260,8 +293,10 @@ def openvas_data(test=None):
             openvas_conf = Configs.query.filter_by(config_name='Openvas').first()
             openvas_conf=sql_dict(openvas_conf)
            
-            thread = Thread(target=openvas.run_test,args=[openvas_conf['config_endpoint'],test_dict])
-            thread.start()
+            # thread = Thread(target=openvas.run_test,args=[openvas_conf['config_endpoint'],test_dict])
+            # thread.start()
+
+            q.put((openvas.run_test, ([openvas_conf['config_endpoint'],test_dict])))
             test.openvas_data=["in Progress",0,{}]
             db.session.commit() 
 
